@@ -25,3 +25,4 @@ export const incrementCorrectAtom = atom(null, (get, set) => {
 export const incrementWrongAtom = atom(null, (get, set) => {
   set(wrongCountAtom, get(wrongCountAtom) + 1);
 });
+export const startQuestionIndexAtom = atom<number>(0);

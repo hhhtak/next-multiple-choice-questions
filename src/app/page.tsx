@@ -1,8 +1,8 @@
 "use client";
 
-import { currentIndexAtom, questionDataAtom } from "@/jotai";
+import { currentIndexAtom, questionDataAtom, startQuestionIndexAtom } from "@/jotai";
 import { parseCsv } from "@/util/parseCsv";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,9 +21,12 @@ function shuffleArray<T>(array: T[]): T[] {
 const StartScreen = () => {
   const setQuestionData = useSetAtom(questionDataAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
+  const [, setStartQuestionIndex] = useAtom(startQuestionIndexAtom); // 追加
   const [loading, setLoading] = useState(true);
   const [selectedFields, setSelectedFields] = useState<Field[]>([]);
   const [isRandom, setIsRandom] = useState(false);
+  const [startIndex, setStartIndex] = useState<number | null>(null); // 追加
+  const [useStartIndex, setUseStartIndex] = useState(false); // 追加
   const router = useRouter();
 
   const handleFieldChange = (field: Field) => {
@@ -34,6 +37,24 @@ const StartScreen = () => {
 
   const handleRandomChange = () => {
     setIsRandom((prev) => !prev);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setStartIndex(isNaN(value) ? null : value);
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUseStartIndex(event.target.checked);
+  };
+
+  const handleStart = () => {
+    let start = 0; // デフォルトは0から開始
+    if (useStartIndex && startIndex !== null && startIndex >= 0) {
+      start = startIndex; // チェックボックスがオンで、かつ有効な開始位置が入力されている場合
+    }
+    setStartQuestionIndex(start);
+    router.push("/questions");
   };
 
   useEffect(() => {
@@ -133,8 +154,38 @@ const StartScreen = () => {
           問題をランダムで表示させる
         </label>
       </div>
+      {/* 開始位置設定 */}
+      <div className="flex flex-col items-start space-y-2 mb-6">
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="useStartIndex"
+            checked={useStartIndex}
+            onChange={handleCheckboxChange}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="useStartIndex" className="text-lg">
+            開始位置を指定する(選択した数値+1から開始します)
+          </label>
+        </div>
+        <div className="flex items-center space-x-4">
+          <label htmlFor="startIndex" className="text-lg">
+            開始位置:
+          </label>
+          <input
+            type="number"
+            id="startIndex"
+            value={startIndex !== null ? startIndex : ""}
+            onChange={handleInputChange}
+            disabled={!useStartIndex} // チェックボックスがオフの場合は無効化
+            className={`border border-gray-300 rounded-md px-3 py-2 text-lg ${
+              !useStartIndex ? "bg-gray-100 cursor-not-allowed" : ""
+            }`}
+          />
+        </div>
+      </div>
       <button
-        onClick={() => router.push("/questions")}
+        onClick={handleStart}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg disabled:bg-gray-400" // ボタンのスタイルを調整
         disabled={selectedFields.length === 0}
       >

@@ -6,6 +6,7 @@ import {
   incrementCorrectAtom,
   incrementWrongAtom,
   questionDataAtom,
+  startQuestionIndexAtom,
   wrongCountAtom,
   wrongQuestionsAtom,
 } from "@/jotai";
@@ -112,6 +113,7 @@ const AnswerResult = ({
 
 const QuestionScreen = () => {
   const [questionData] = useAtom(questionDataAtom);
+  const [startQuestionIndex] = useAtom(startQuestionIndexAtom); // 開始位置を取得
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
   const [wrongCount] = useAtom(wrongCountAtom);
@@ -124,8 +126,14 @@ const QuestionScreen = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  const currentQuestion = questionData[currentIndex];
-  const totalQuestions = questionData?.length || 0;
+  // 開始位置以降の問題を抽出
+  const filteredQuestionData = useMemo(() => {
+    return questionData.slice(startQuestionIndex);
+  }, [questionData, startQuestionIndex]);
+
+  // 現在の問題を取得
+  const currentQuestion = filteredQuestionData[currentIndex];
+  const totalQuestions = filteredQuestionData?.length || 0;
 
   // 選択肢をシャッフルし、メモ化
   const shuffledOptions = useMemo(() => {
