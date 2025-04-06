@@ -15,9 +15,12 @@ const ResultScreen = () => {
       <p>不正解数: {wrongCount}</p>
       <h2>採番されたID</h2>
       <ul>
-        {questionData.map((item) => (
-          <li key={item.id}>{item.id}</li>
-        ))}
+        {/* questionData が空の場合は何も表示しない */}
+        {questionData.length > 0 ? (
+          questionData.map((item) => <li key={item.id}>{item.id}</li>)
+        ) : (
+          <li>問題がありませんでした。</li>
+        )}
       </ul>
     </div>
   );

@@ -9,7 +9,75 @@ import {
   wrongCountAtom,
 } from "@/jotai";
 import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+
+const Question = ({ question }: { question: string }) => {
+  return <h2>{question}</h2>;
+};
+
+const AnswerOptions = ({
+  options,
+  selectedAnswer,
+  handleAnswerChange,
+  isChecked,
+}: {
+  options: string[];
+  selectedAnswer: string | null;
+  handleAnswerChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isChecked: boolean;
+}) => {
+  return (
+    <div>
+      {options.map((option, index) => (
+        <div key={index}>
+          <input
+            type="radio"
+            id={`option${index + 1}`}
+            name="answer"
+            value={option}
+            checked={selectedAnswer === option}
+            onChange={handleAnswerChange}
+            disabled={isChecked}
+          />
+          <label htmlFor={`option${index + 1}`}>{option}</label>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const AnswerResult = ({
+  isCorrect,
+  correctAnswer,
+  memo,
+  handleNextQuestion,
+}: {
+  isCorrect: boolean;
+  correctAnswer: string;
+  memo: string;
+  handleNextQuestion: () => void;
+}) => {
+  return (
+    <div className="mt-4">
+      <p>
+        {isCorrect ? "正解！" : "不正解！"}
+        <br />
+        正解: {correctAnswer}
+        <br />
+        メモ: {memo}
+      </p>
+      <div className="mt-4">
+        <button
+          onClick={handleNextQuestion}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          次の問題へ
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const QuestionScreen = () => {
   const [quizData] = useAtom(questionDataAtom);
@@ -18,23 +86,27 @@ const QuestionScreen = () => {
   const [wrongCount] = useAtom(wrongCountAtom);
   const [, incrementCorrect] = useAtom(incrementCorrectAtom);
   const [, incrementWrong] = useAtom(incrementWrongAtom);
+  const router = useRouter();
 
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const currentQuestion = quizData[currentIndex];
-  // const router = useRouter();
+  // const totalQuestions = quizData.length; // 全体の問題数を取得
+  const totalQuestions = quizData?.length || 0;
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value);
   };
 
   const handleCheckAnswer = () => {
-    if (selectedAnswer === currentQuestion.answer) {
-      incrementCorrect();
-    } else {
-      incrementWrong();
+    if (currentQuestion) {
+      if (selectedAnswer === currentQuestion.answer) {
+        incrementCorrect();
+      } else {
+        incrementWrong();
+      }
     }
     setIsAnswered(true);
     setIsChecked(true);
@@ -48,64 +120,38 @@ const QuestionScreen = () => {
   };
 
   if (!currentQuestion) {
-    return <div>問題がありません。</div>;
+    router.push("/questions/result");
+    return null;
   }
+
+  const options = [
+    currentQuestion.option1,
+    currentQuestion.option2,
+    currentQuestion.option3,
+    currentQuestion.option4,
+  ];
 
   return (
     <div>
-      <h2>{currentQuestion.question}</h2>
-      <div>
-        <input
-          type="radio"
-          id="option1"
-          name="answer"
-          value={currentQuestion.option1}
-          checked={selectedAnswer === currentQuestion.option1}
-          onChange={handleAnswerChange}
-          disabled={isChecked}
-        />
-        <label htmlFor="option1">{currentQuestion.option1}</label>
+      <div className="flex justify-between">
+        <p>
+          {currentIndex + 1}/{totalQuestions}
+        </p>
+        <div className="flex">
+          <p className="mr-4">正解数: {correctCount}</p>
+          <p>不正解数: {wrongCount}</p>
+        </div>
       </div>
-      <div>
-        <input
-          type="radio"
-          id="option2"
-          name="answer"
-          value={currentQuestion.option2}
-          checked={selectedAnswer === currentQuestion.option2}
-          onChange={handleAnswerChange}
-          disabled={isChecked}
-        />
-        <label htmlFor="option2">{currentQuestion.option2}</label>
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="option3"
-          name="answer"
-          value={currentQuestion.option3}
-          checked={selectedAnswer === currentQuestion.option3}
-          onChange={handleAnswerChange}
-          disabled={isChecked}
-        />
-        <label htmlFor="option3">{currentQuestion.option3}</label>
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="option4"
-          name="answer"
-          value={currentQuestion.option4}
-          checked={selectedAnswer === currentQuestion.option4}
-          onChange={handleAnswerChange}
-          disabled={isChecked}
-        />
-        <label htmlFor="option4">{currentQuestion.option4}</label>
-      </div>
+      <Question question={currentQuestion.question} />
+      <AnswerOptions
+        options={options}
+        selectedAnswer={selectedAnswer}
+        handleAnswerChange={handleAnswerChange}
+        isChecked={isChecked}
+      />
       <div className="mt-4">
         <button
           onClick={handleCheckAnswer}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
           disabled={isAnswered || selectedAnswer === null}
         >
           確認
@@ -113,29 +159,13 @@ const QuestionScreen = () => {
       </div>
 
       {isAnswered && (
-        <div className="mt-4">
-          <p>
-            {selectedAnswer === currentQuestion.answer ? "正解！" : "不正解！"}
-            <br />
-            正解: {currentQuestion.answer}
-            <br />
-            メモ: {currentQuestion.memo}
-          </p>
-          <div className="mt-4">
-            <button
-              onClick={handleNextQuestion}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              次の問題へ
-            </button>
-          </div>
-        </div>
+        <AnswerResult
+          isCorrect={selectedAnswer === currentQuestion.answer}
+          correctAnswer={currentQuestion.answer}
+          memo={currentQuestion.memo}
+          handleNextQuestion={handleNextQuestion}
+        />
       )}
-
-      <div className="mt-4">
-        <p>正解数: {correctCount}</p>
-        <p>不正解数: {wrongCount}</p>
-      </div>
     </div>
   );
 };
