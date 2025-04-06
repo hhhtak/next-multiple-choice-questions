@@ -1,7 +1,0 @@
-category,question,option1,option2,option3,option4,answer,memo
-IT分野-Chapter1,IPアドレスの正しい形式はどれ？,192.168.1.1,999.999.999.999,300.300.300.300,abc.def.ghi.jkl,192.168.1.1,ITテキストP10
-IT分野-Chapter2,TCPとUDPの違いは？,どちらも同じ,UDPは接続型,TCPはコネクションレス,TCPは信頼性が高い,TCPは信頼性が高い,ITテキストP12
-顧客分野-Chapter1,顧客ニーズの定義とは？,会社の利益,ユーザーが本当に必要とすること,広告戦略,販売手法,ユーザーが本当に必要とすること,顧客テキストP5
-顧客分野-Chapter2,CRMの意味は？,Customer Repeat Model,Client Reaction Map,Customer Relationship Management,Corporate Role Management,Customer Relationship Management,顧客テキストP8
-商品分野-Chapter1,商品のライフサイクルで最初の段階は？,成長期,導入期,成熟期,衰退期,導入期,商品テキストP3
-商品分野-Chapter2,市場でシェアを拡大する戦略は？,撤退戦略,ニッチ戦略,差別化戦略,価格無視戦略,差別化戦略,商品テキストP6

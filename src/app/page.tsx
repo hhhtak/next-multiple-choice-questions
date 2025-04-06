@@ -14,7 +14,7 @@ const StartScreen = () => {
 
   useEffect(() => {
     const fetchCsv = async () => {
-      const res = await fetch("/csv/sampleA.csv");
+      const res = await fetch("/csv/it.csv");
       const text = await res.text();
       const parsed = parseCsv(text);
       setQuestionData(parsed);
