@@ -1,3 +1,3 @@
-category,question,option1,option2,option3,option4,answer,memo
-商品分野-Chapter1,商品のライフサイクルで最初の段階は？,成長期,導入期,成熟期,衰退期,導入期,商品テキストP3
-商品分野-Chapter2,市場でシェアを拡大する戦略は？,撤退戦略,ニッチ戦略,差別化戦略,価格無視戦略,差別化戦略,商品テキストP6
+category,question,option1,option2,option3,option4,memo,answer
+商品分野-Chapter1,商品のライフサイクルで最初の段階は？,成長期,導入期,成熟期,衰退期,商品テキストP3,導入期
+商品分野-Chapter2,市場でシェアを拡大する戦略は？,撤退戦略,ニッチ戦略,差別化戦略,価格無視戦略,商品テキストP6,差別化戦略
