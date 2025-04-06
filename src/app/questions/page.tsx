@@ -43,7 +43,7 @@ const AnswerOptions = ({
       {shuffledOptions.map((option, index) => (
         <div
           key={index}
-          className="flex items-center p-3 border rounded-lg hover:bg-gray-100" // 選択肢のスタイルを調整
+          className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-black hover:cursor-pointer" // ボーダーの色を調整
         >
           <input
             type="radio"
@@ -53,9 +53,12 @@ const AnswerOptions = ({
             checked={selectedAnswer === option}
             onChange={handleAnswerChange}
             disabled={isChecked}
-            className="mr-3"
+            className="mr-3 text-blue-600" // チェックボックスの色を調整
           />
-          <label htmlFor={`option${index + 1}`} className="text-lg">
+          <label
+            htmlFor={`option${index + 1}`}
+            className="text-lg w-full hover:cursor-pointer"
+          >
             {option}
           </label>
         </div>
@@ -76,7 +79,8 @@ const AnswerResult = ({
   handleNextQuestion: () => void;
 }) => {
   return (
-    <div className="mt-4 p-4 border rounded-lg shadow-md bg-gray-100">
+    <div className="mt-4 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-100">
+      {/* ボーダーの色を調整 */}
       <p className="mb-2">
         {isCorrect ? (
           <span className="text-green-500 font-bold">正解！</span>
@@ -177,7 +181,7 @@ const QuestionScreen = () => {
         <p className="text-lg">カテゴリ: {currentQuestion.category}</p>
         {/* カテゴリの文字サイズを調整 */}
         <p className="text-lg">
-          {currentIndex + 1}/{totalQuestions}
+          問題数: {currentIndex + 1}/{totalQuestions}
         </p>
         <div className="flex">
           <p className="mr-4">正解数: {correctCount}</p>

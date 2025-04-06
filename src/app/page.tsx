@@ -87,7 +87,7 @@ const StartScreen = () => {
             id="it"
             checked={selectedFields.includes("it")}
             onChange={() => handleFieldChange("it")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
           />
           <label htmlFor="it" className="text-lg">
             IT分野
@@ -100,7 +100,7 @@ const StartScreen = () => {
             id="customer"
             checked={selectedFields.includes("customer")}
             onChange={() => handleFieldChange("customer")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
           />
           <label htmlFor="customer" className="text-lg">
             顧客分野
@@ -113,7 +113,7 @@ const StartScreen = () => {
             id="product"
             checked={selectedFields.includes("product")}
             onChange={() => handleFieldChange("product")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
           />
           <label htmlFor="product" className="text-lg">
             商品分野
@@ -127,7 +127,7 @@ const StartScreen = () => {
           id="random"
           checked={isRandom}
           onChange={handleRandomChange}
-          className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
+          className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
         />
         <label htmlFor="random" className="text-lg">
           問題をランダムで表示させる

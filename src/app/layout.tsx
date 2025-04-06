@@ -25,10 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-black`} // 背景色を追加、文字色を黒に変更
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`} // 背景色を白に変更
       >
-        <div className="container mx-auto p-4">{children}</div>{" "}
-        {/* コンテンツを中央に配置 */}
+        <div className="container mx-auto p-4">{children}</div>
       </body>
     </html>
   );

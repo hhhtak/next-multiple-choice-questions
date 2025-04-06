@@ -41,7 +41,10 @@ const ResultScreen = () => {
         <ul className="space-y-4">
           {/* リストの間隔を調整 */}
           {wrongQuestions.map((wrongQuestion, index) => (
-            <li key={index} className="p-4 border rounded-lg shadow-md bg-gray-100">
+            <li
+              key={index}
+              className="p-4 border border-gray-300 rounded-lg shadow-md bg-gray-100" // ボーダーの色を調整
+            >
               {/* 各問題の背景色とボーダー */}
               <p className="font-bold mb-2">問題: {wrongQuestion.question}</p>
               {/* 問題の文字を太字 */}
