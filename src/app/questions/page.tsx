@@ -88,10 +88,10 @@ const AnswerResult = ({
           <span className="text-red-500 font-bold">不正解！</span>
         )}
       </p>
-      <p className="mb-2">
+      <p className="mb-2 text-black">
         <span className="font-bold">正解:</span> {correctAnswer}
       </p>
-      <p className="mb-2">
+      <p className="mb-2 text-black">
         <span className="font-bold">メモ:</span> {memo}
       </p>
       <div className="mt-4">

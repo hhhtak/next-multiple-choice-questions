@@ -38,7 +38,7 @@ const ResultScreen = () => {
       <h2 className="text-2xl font-bold mb-4">間違った問題</h2>
       {/* 見出しの文字サイズと太字 */}
       {wrongQuestions.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="space-y-4 text-black">
           {/* リストの間隔を調整 */}
           {wrongQuestions.map((wrongQuestion, index) => (
             <li
