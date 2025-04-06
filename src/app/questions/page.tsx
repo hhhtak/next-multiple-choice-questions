@@ -43,7 +43,7 @@ const AnswerOptions = ({
       {shuffledOptions.map((option, index) => (
         <div
           key={index}
-          className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-black hover:cursor-pointer" // ボーダーの色を調整
+          className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-black hover:cursor-pointer"
         >
           <input
             type="radio"
@@ -53,7 +53,7 @@ const AnswerOptions = ({
             checked={selectedAnswer === option}
             onChange={handleAnswerChange}
             disabled={isChecked}
-            className="mr-3 text-blue-600" // チェックボックスの色を調整
+            className="mr-3 text-blue-600"
           />
           <label
             htmlFor={`option${index + 1}`}
@@ -72,21 +72,25 @@ const AnswerResult = ({
   correctAnswer,
   memo,
   handleNextQuestion,
+  selectedAnswer, // 追加
 }: {
   isCorrect: boolean;
   correctAnswer: string;
   memo: string;
   handleNextQuestion: () => void;
+  selectedAnswer: string | null; // 追加
 }) => {
   return (
     <div className="mt-4 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-100">
-      {/* ボーダーの色を調整 */}
       <p className="mb-2">
         {isCorrect ? (
           <span className="text-green-500 font-bold">正解！</span>
         ) : (
           <span className="text-red-500 font-bold">不正解！</span>
         )}
+      </p>
+      <p className="mb-2 text-black">
+        <span className="font-bold">あなたの回答:</span> {selectedAnswer} {/* 追加 */}
       </p>
       <p className="mb-2 text-black">
         <span className="font-bold">正解:</span> {correctAnswer}
@@ -175,11 +179,8 @@ const QuestionScreen = () => {
 
   return (
     <div className="p-4">
-      {/* 全体の余白を調整 */}
       <div className="flex justify-between items-center mb-6">
-        {/* ヘッダーの配置を調整 */}
         <p className="text-lg">カテゴリ: {currentQuestion.category}</p>
-        {/* カテゴリの文字サイズを調整 */}
         <p className="text-lg">
           問題数: {currentIndex + 1}/{totalQuestions}
         </p>
@@ -203,7 +204,7 @@ const QuestionScreen = () => {
         <button
           onClick={handleCheckAnswer}
           disabled={isAnswered || selectedAnswer === null}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" // ボタンの色とホバー時の色を変更
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           確認
         </button>
@@ -214,6 +215,7 @@ const QuestionScreen = () => {
           correctAnswer={currentQuestion.answer}
           memo={currentQuestion.memo}
           handleNextQuestion={handleNextQuestion}
+          selectedAnswer={selectedAnswer} // 追加
         />
       )}
     </div>
