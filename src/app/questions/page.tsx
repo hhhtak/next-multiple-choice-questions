@@ -80,7 +80,7 @@ const AnswerResult = ({
 };
 
 const QuestionScreen = () => {
-  const [quizData] = useAtom(questionDataAtom);
+  const [questionData] = useAtom(questionDataAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
   const [wrongCount] = useAtom(wrongCountAtom);
@@ -92,9 +92,9 @@ const QuestionScreen = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  const currentQuestion = quizData[currentIndex];
+  const currentQuestion = questionData[currentIndex];
   // const totalQuestions = quizData.length; // 全体の問題数を取得
-  const totalQuestions = quizData?.length || 0;
+  const totalQuestions = questionData?.length || 0;
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value);
