@@ -1,13 +1,13 @@
 "use client";
 
-import { currentIndexAtom, quizDataAtom } from "@/jotai";
+import { currentIndexAtom, questionDataAtom } from "@/jotai";
 import { parseCsv } from "@/util/parseCsv";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const StartScreen = () => {
-  const setQuizData = useSetAtom(quizDataAtom);
+  const setQuestionData = useSetAtom(questionDataAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -17,12 +17,12 @@ const StartScreen = () => {
       const res = await fetch("/csv/sampleA.csv");
       const text = await res.text();
       const parsed = parseCsv(text);
-      setQuizData(parsed);
+      setQuestionData(parsed);
       setCurrentIndex(0);
       setLoading(false);
     };
     fetchCsv();
-  }, [setQuizData, setCurrentIndex]);
+  }, [setQuestionData, setCurrentIndex]);
 
   if (loading) return <div>読み込み中...</div>;
 

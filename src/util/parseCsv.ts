@@ -1,7 +1,7 @@
 // utils/parseCsv.ts
-import type { QuizItem } from "@/jotai";
+import type { QuestionItem } from "@/jotai";
 
-export const parseCsv = (text: string): QuizItem[] => {
+export const parseCsv = (text: string): QuestionItem[] => {
   const lines = text.trim().split("\n");
   const headers = lines[0].split(",").map((h) => h.trim());
 
@@ -25,7 +25,7 @@ export const parseCsv = (text: string): QuizItem[] => {
       4,
       "0"
     )}`;
-    return { id, ...item } as QuizItem;
+    return { id, ...item } as QuestionItem;
   });
 
   return dataWithIds;

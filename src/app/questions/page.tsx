@@ -5,21 +5,21 @@ import {
   currentIndexAtom,
   incrementCorrectAtom,
   incrementWrongAtom,
-  quizDataAtom,
+  questionDataAtom,
   wrongCountAtom,
 } from "@/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
-const QuizScreen = () => {
-  const [quizData] = useAtom(quizDataAtom);
+const QuestionScreen = () => {
+  const [questionData] = useAtom(questionDataAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
   const [wrongCount] = useAtom(wrongCountAtom);
   const [, incrementCorrect] = useAtom(incrementCorrectAtom);
   const [, incrementWrong] = useAtom(incrementWrongAtom);
 
-  const currentQuestion = quizData[currentIndex];
+  const currentQuestion = questionData[currentIndex];
   const router = useRouter();
 
   const handleAnswer = (answer: string) => {
@@ -59,4 +59,4 @@ const QuizScreen = () => {
   );
 };
 
-export default QuizScreen;
+export default QuestionScreen;

@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-export type QuizItem = {
+export type QuestionItem = {
   id: string;
   category: string;
   question: string;
@@ -12,7 +12,7 @@ export type QuizItem = {
   memo: string;
 };
 
-export const quizDataAtom = atom<QuizItem[]>([]);
+export const questionDataAtom = atom<QuestionItem[]>([]);
 export const currentIndexAtom = atom(0);
 export const correctCountAtom = atom(0);
 export const wrongCountAtom = atom(0);
