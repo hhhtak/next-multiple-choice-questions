@@ -1,6 +1,6 @@
 "use client";
 
-import { currentIndexAtom, quizDataAtom } from "@/atoms";
+import { currentIndexAtom, quizDataAtom } from "@/jotai";
 import { parseCsv } from "@/util/parseCsv";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -27,15 +27,15 @@ const StartScreen = () => {
   if (loading) return <div>読み込み中...</div>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl mb-4">クイズを開始しますか？</h1>
+    <>
+      <h1 className="text-2xl mb-4">試験を開始しますか？</h1>
       <button
-        onClick={() => router.push("/quiz")}
+        onClick={() => router.push("/questions")}
         className="bg-blue-500 text-white px-4 py-2 rounded"
       >
-        開始
+        試験スタート
       </button>
-    </div>
+    </>
   );
 };
 

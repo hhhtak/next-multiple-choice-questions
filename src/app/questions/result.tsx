@@ -1,6 +1,6 @@
 "use client";
 
-import { correctCountAtom, quizDataAtom, wrongCountAtom } from "@/atoms";
+import { correctCountAtom, quizDataAtom, wrongCountAtom } from "@/jotai";
 import { useAtom } from "jotai";
 
 const ResultScreen = () => {

@@ -7,7 +7,7 @@ import {
   incrementWrongAtom,
   quizDataAtom,
   wrongCountAtom,
-} from "@/atoms";
+} from "@/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
@@ -54,7 +54,7 @@ const QuizScreen = () => {
       </div>
       <div>正解数: {correctCount}</div>
       <div>不正解数: {wrongCount}</div>
-      <button onClick={() => router.push("/quiz/result")}>結果</button>
+      <button onClick={() => router.push("/questions/result")}>結果</button>
     </div>
   );
 };

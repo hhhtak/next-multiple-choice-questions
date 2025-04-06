@@ -1,5 +1,5 @@
 // utils/parseCsv.ts
-import type { QuizItem } from "@/atoms";
+import type { QuizItem } from "@/jotai";
 
 export const parseCsv = (text: string): QuizItem[] => {
   const lines = text.trim().split("\n");
