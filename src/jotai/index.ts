@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 
 export type QuestionItem = {
-  id: string;
+  id: number;
   category: string;
   question: string;
   option1: string;
