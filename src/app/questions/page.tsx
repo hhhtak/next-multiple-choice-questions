@@ -148,6 +148,7 @@ const QuestionScreen = () => {
   return (
     <div>
       <div className="flex justify-between">
+        <p>カテゴリ: {currentQuestion.category}</p>
         <p>
           {currentIndex + 1}/{totalQuestions}
         </p>
