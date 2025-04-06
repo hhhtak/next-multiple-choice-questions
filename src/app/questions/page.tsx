@@ -25,7 +25,11 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const Question = ({ question }: { question: string }) => {
-  return <h2 className="text-2xl font-bold mb-4">{question}</h2>;
+  return (
+    <div className="mb-4">
+      <p className="text-xl font-semibold whitespace-pre-wrap">{question}</p>
+    </div>
+  );
 };
 
 const AnswerOptions = ({
