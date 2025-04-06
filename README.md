@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 多肢選択式クイズアプリ
 
-## Getting Started
+## 概要
 
-First, run the development server:
+このプロジェクトは、CSV ファイルから読み込んだ問題を出題する多肢選択式クイズアプリです。Next.js、Jotai、Tailwind CSS を使用して構築されています。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 機能
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **CSV ファイルからの問題読み込み:**
+  - `it.csv`、`customer.csv`、`product.csv` などの CSV ファイルから問題データを読み込みます。
+  - CSV ファイルの形式は、`category,question,option1,option2,option3,option4,answer,memo` の 8 つのカラムで構成されています。
+- **カテゴリ選択:**
+  - IT 分野、顧客分野、商品分野などのカテゴリを選択して、出題範囲を絞り込むことができます。
+  - 複数のカテゴリを同時に選択することも可能です。
+- **問題のランダム表示:**
+  - 「問題をランダムで表示させる」チェックボックスをオンにすることで、問題の出題順序をランダムにすることができます。
+- **開始位置の指定:**
+  - 「開始位置を指定する」チェックボックスをオンにすることで、問題の開始位置を自由に設定できます。
+  - チェックボックスをオフにした場合は、常に最初（0 番目）の問題から開始されます。
+- **問題の表示と解答:**
+  - 問題文と 4 つの選択肢が表示されます。
+  - 選択肢をクリックして解答します。
+- **解答の確認:**
+  - 「確認」ボタンをクリックすると、正誤判定と解説（memo）が表示されます。
+- **次の問題への遷移:**
+  - 「次の問題へ」ボタンをクリックすると、次の問題に進みます。
+- **結果画面:**
+  - すべての問題に解答すると、結果画面が表示されます。
+  - 正解数と不正解数が表示されます。
+  - 間違えた問題の一覧と、選択した解答、正しい解答が表示されます。
+- **状態管理**
+  - Jotai を使用して、問題データ、現在の問題番号、正解数、不正解数、間違えた問題などの状態を管理しています。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 使用技術
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js:** React ベースのフレームワーク。サーバーサイドレンダリングやルーティングなどの機能を提供します。
+- **Jotai:** React の状態管理ライブラリ。シンプルで使いやすい API を提供します。
+- **Tailwind CSS:** ユーティリティファーストの CSS フレームワーク。効率的なスタイリングを実現します。
+- **TypeScript:** JavaScript のスーパーセット。静的型付けにより、コードの品質を向上させます。
+- **CSV ファイルの読み込み**
+  - `parseCsv`関数を使用して、CSV ファイルをパースしています。
 
-## Learn More
+## 開発環境の構築
 
-To learn more about Next.js, take a look at the following resources:
+1.  **リポジトリのクローン:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```bash
+    git clone <リポジトリのURL>
+    cd multiple-questions
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2.  **依存関係のインストール:**
 
-## Deploy on Vercel
+    ```bash
+    npm install
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **開発サーバーの起動:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    ```bash
+    npm run dev
+    ```
+
+    ブラウザで `http://localhost:3000` にアクセスします。
+
+## CSV ファイルの作成方法
+
+- `public/csv/` フォルダに、`it.csv`、`customer.csv`、`product.csv` などの CSV ファイルを作成します。
+- CSV ファイルの形式は、以下の 8 つのカラムで構成されます。
+  - `category`: 問題のカテゴリ（例：IT 分野-Chapter1）
+  - `question`: 問題文
+  - `option1`: 選択肢 1
+  - `option2`: 選択肢 2
+  - `option3`: 選択肢 3
+  - `option4`: 選択肢 4
+  - `answer`: 正解の選択肢
+  - `memo`: 解説や参照情報
+
+## 今後の課題
+
+- 問題データの追加
+- デザインの改善
+- エラー処理の強化
+- 問題の難易度設定
+- タイマー機能の追加
+- ユーザー認証機能の追加
+
+## ライセンス
+
+このプロジェクトは、MIT ライセンスの下で公開されています。
