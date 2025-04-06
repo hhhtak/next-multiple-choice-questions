@@ -24,7 +24,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const Question = ({ question }: { question: string }) => {
-  return <h2>{question}</h2>;
+  return <h2 className="text-2xl font-bold mb-4">{question}</h2>;
 };
 
 const AnswerOptions = ({
@@ -39,9 +39,12 @@ const AnswerOptions = ({
   isChecked: boolean;
 }) => {
   return (
-    <div>
+    <div className="space-y-3">
       {shuffledOptions.map((option, index) => (
-        <div key={index}>
+        <div
+          key={index}
+          className="flex items-center p-3 border rounded-lg hover:bg-gray-100" // 選択肢のスタイルを調整
+        >
           <input
             type="radio"
             id={`option${index + 1}`}
@@ -50,8 +53,11 @@ const AnswerOptions = ({
             checked={selectedAnswer === option}
             onChange={handleAnswerChange}
             disabled={isChecked}
+            className="mr-3"
           />
-          <label htmlFor={`option${index + 1}`}>{option}</label>
+          <label htmlFor={`option${index + 1}`} className="text-lg">
+            {option}
+          </label>
         </div>
       ))}
     </div>
@@ -70,18 +76,24 @@ const AnswerResult = ({
   handleNextQuestion: () => void;
 }) => {
   return (
-    <div className="mt-4">
-      <p>
-        {isCorrect ? "正解！" : "不正解！"}
-        <br />
-        正解: {correctAnswer}
-        <br />
-        メモ: {memo}
+    <div className="mt-4 p-4 border rounded-lg shadow-md bg-gray-100">
+      <p className="mb-2">
+        {isCorrect ? (
+          <span className="text-green-500 font-bold">正解！</span>
+        ) : (
+          <span className="text-red-500 font-bold">不正解！</span>
+        )}
+      </p>
+      <p className="mb-2">
+        <span className="font-bold">正解:</span> {correctAnswer}
+      </p>
+      <p className="mb-2">
+        <span className="font-bold">メモ:</span> {memo}
       </p>
       <div className="mt-4">
         <button
           onClick={handleNextQuestion}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           次の問題へ
         </button>
@@ -158,10 +170,13 @@ const QuestionScreen = () => {
   }
 
   return (
-    <div>
-      <div className="flex justify-between">
-        <p>カテゴリ: {currentQuestion.category}</p>
-        <p>
+    <div className="p-4">
+      {/* 全体の余白を調整 */}
+      <div className="flex justify-between items-center mb-6">
+        {/* ヘッダーの配置を調整 */}
+        <p className="text-lg">カテゴリ: {currentQuestion.category}</p>
+        {/* カテゴリの文字サイズを調整 */}
+        <p className="text-lg">
           {currentIndex + 1}/{totalQuestions}
         </p>
         <div className="flex">
@@ -169,22 +184,26 @@ const QuestionScreen = () => {
           <p>不正解数: {wrongCount}</p>
         </div>
       </div>
-      <Question question={currentQuestion.question} />
-      <AnswerOptions
-        shuffledOptions={shuffledOptions}
-        selectedAnswer={selectedAnswer}
-        handleAnswerChange={handleAnswerChange}
-        isChecked={isChecked}
-      />
+      <div className="mb-6">
+        <Question question={currentQuestion.question} />
+      </div>
+      <div className="mb-6">
+        <AnswerOptions
+          shuffledOptions={shuffledOptions}
+          selectedAnswer={selectedAnswer}
+          handleAnswerChange={handleAnswerChange}
+          isChecked={isChecked}
+        />
+      </div>
       <div className="mt-4">
         <button
           onClick={handleCheckAnswer}
           disabled={isAnswered || selectedAnswer === null}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" // ボタンの色とホバー時の色を変更
         >
           確認
         </button>
       </div>
-
       {isAnswered && (
         <AnswerResult
           isCorrect={selectedAnswer === currentQuestion.answer}

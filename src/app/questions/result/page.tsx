@@ -27,36 +27,40 @@ const ResultScreen = () => {
   };
 
   return (
-    <div>
-      <h1>結果</h1>
-      <p>正解数: {correctCount}</p>
-      <p>不正解数: {wrongCount}</p>
-      <h2>間違った問題</h2>
+    <div className="p-4">
+      {/* 全体の余白を調整 */}
+      <h1 className="text-3xl font-bold mb-6">結果</h1>
+      {/* 見出しの文字サイズと太字 */}
+      <p className="text-lg mb-2">正解数: {correctCount}</p>
+      {/* 正解数の文字サイズを調整 */}
+      <p className="text-lg mb-6">不正解数: {wrongCount}</p>
+      {/* 不正解数の文字サイズを調整 */}
+      <h2 className="text-2xl font-bold mb-4">間違った問題</h2>
+      {/* 見出しの文字サイズと太字 */}
       {wrongQuestions.length > 0 ? (
-        <ul>
-          {wrongQuestions.map(
-            (
-              wrongQuestion,
-              index // index を使用
-            ) => (
-              <li key={index} className="mb-4 border p-4 rounded">
-                <p className="font-bold">問題: {wrongQuestion.question}</p>
-                <p>
-                  あなたの回答:
-                  <span className="text-red-500">{wrongQuestion.selectedAnswer}</span>
-                </p>
-                <p>正解: {wrongQuestion.correctAnswer}</p> {/* correctAnswer を参照 */}
-              </li>
-            )
-          )}
+        <ul className="space-y-4">
+          {/* リストの間隔を調整 */}
+          {wrongQuestions.map((wrongQuestion, index) => (
+            <li key={index} className="p-4 border rounded-lg shadow-md bg-gray-100">
+              {/* 各問題の背景色とボーダー */}
+              <p className="font-bold mb-2">問題: {wrongQuestion.question}</p>
+              {/* 問題の文字を太字 */}
+              <p className="mb-2">
+                あなたの回答:
+                <span className="text-red-500">{wrongQuestion.selectedAnswer}</span>
+              </p>
+              <p>正解: {wrongQuestion.correctAnswer}</p>
+            </li>
+          ))}
         </ul>
       ) : (
         <p>間違った問題はありませんでした。</p>
       )}
-      <div className="mt-4">
+      <div className="mt-8">
+        {/* ボタンの余白を調整 */}
         <button
           onClick={handleBackToTop}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg" // ボタンのスタイルを調整
         >
           トップに戻る
         </button>

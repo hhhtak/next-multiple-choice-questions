@@ -71,57 +71,76 @@ const StartScreen = () => {
     fetchCsv();
   }, [selectedFields, setQuestionData, setCurrentIndex, isRandom]); // isRandom を依存配列に追加
 
-  if (loading) return <div>読み込み中...</div>;
+  if (loading) return <div className="text-center">読み込み中...</div>;
 
   return (
-    <>
-      <h1 className="text-2xl mb-4">試験を開始しますか？</h1>
-      <div className="mb-4">
-        <div>
+    <div className="p-4">
+      {/* 全体の余白を調整 */}
+      <h1 className="text-3xl font-bold mb-6">試験を開始しますか？</h1>
+      {/* 見出しの文字サイズと太字 */}
+      <div className="mb-6 space-y-3">
+        {/* チェックボックスの間隔を調整 */}
+        <div className="flex items-center">
+          {/* チェックボックスとラベルを横並びにする */}
           <input
             type="checkbox"
             id="it"
             checked={selectedFields.includes("it")}
             onChange={() => handleFieldChange("it")}
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
           />
-          <label htmlFor="it">IT分野</label>
+          <label htmlFor="it" className="text-lg">
+            IT分野
+          </label>
         </div>
-        <div>
+        <div className="flex items-center">
+          {/* チェックボックスとラベルを横並びにする */}
           <input
             type="checkbox"
             id="customer"
             checked={selectedFields.includes("customer")}
             onChange={() => handleFieldChange("customer")}
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
           />
-          <label htmlFor="customer">顧客分野</label>
+          <label htmlFor="customer" className="text-lg">
+            顧客分野
+          </label>
         </div>
-        <div>
+        <div className="flex items-center">
+          {/* チェックボックスとラベルを横並びにする */}
           <input
             type="checkbox"
             id="product"
             checked={selectedFields.includes("product")}
             onChange={() => handleFieldChange("product")}
+            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
           />
-          <label htmlFor="product">商品分野</label>
+          <label htmlFor="product" className="text-lg">
+            商品分野
+          </label>
         </div>
       </div>
-      <div className="mb-4">
+      <div className="mb-6 flex items-center">
+        {/* チェックボックスとラベルを横並びにする */}
         <input
           type="checkbox"
           id="random"
           checked={isRandom}
           onChange={handleRandomChange}
+          className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスのスタイルを調整
         />
-        <label htmlFor="random">ランダム</label>
+        <label htmlFor="random" className="text-lg">
+          問題をランダムで表示させる
+        </label>
       </div>
       <button
         onClick={() => router.push("/questions")}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg disabled:bg-gray-400" // ボタンのスタイルを調整
         disabled={selectedFields.length === 0}
       >
         試験スタート
       </button>
-    </>
+    </div>
   );
 };
 
