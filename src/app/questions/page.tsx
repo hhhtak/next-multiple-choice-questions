@@ -7,6 +7,7 @@ import {
   incrementWrongAtom,
   questionDataAtom,
   wrongCountAtom,
+  wrongQuestionsAtom,
 } from "@/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -96,6 +97,7 @@ const QuestionScreen = () => {
   const [wrongCount] = useAtom(wrongCountAtom);
   const [, incrementCorrect] = useAtom(incrementCorrectAtom);
   const [, incrementWrong] = useAtom(incrementWrongAtom);
+  const [, setWrongQuestions] = useAtom(wrongQuestionsAtom);
   const router = useRouter();
 
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -127,6 +129,16 @@ const QuestionScreen = () => {
         incrementCorrect();
       } else {
         incrementWrong();
+        // 不正解の場合、間違った問題を wrongQuestionsAtom に追加
+        setWrongQuestions((prevWrongQuestions) => [
+          ...prevWrongQuestions,
+          {
+            id: Date.now(), // 一意なIDを生成
+            question: currentQuestion.question,
+            selectedAnswer: selectedAnswer,
+            correctAnswer: currentQuestion.answer,
+          },
+        ]);
       }
     }
     setIsAnswered(true);
