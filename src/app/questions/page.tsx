@@ -10,26 +10,36 @@ import {
 } from "@/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+
+// Helper function to shuffle an array
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 const Question = ({ question }: { question: string }) => {
   return <h2>{question}</h2>;
 };
 
 const AnswerOptions = ({
-  options,
+  shuffledOptions,
   selectedAnswer,
   handleAnswerChange,
   isChecked,
 }: {
-  options: string[];
+  shuffledOptions: string[];
   selectedAnswer: string | null;
   handleAnswerChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   isChecked: boolean;
 }) => {
   return (
     <div>
-      {options.map((option, index) => (
+      {shuffledOptions.map((option, index) => (
         <div key={index}>
           <input
             type="radio"
@@ -93,8 +103,19 @@ const QuestionScreen = () => {
   const [isChecked, setIsChecked] = useState(false);
 
   const currentQuestion = questionData[currentIndex];
-  // const totalQuestions = quizData.length; // 全体の問題数を取得
   const totalQuestions = questionData?.length || 0;
+
+  // 選択肢をシャッフルし、メモ化
+  const shuffledOptions = useMemo(() => {
+    if (!currentQuestion) return [];
+    const options = [
+      currentQuestion.option1,
+      currentQuestion.option2,
+      currentQuestion.option3,
+      currentQuestion.option4,
+    ];
+    return shuffleArray(options);
+  }, [currentQuestion]);
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value);
@@ -124,13 +145,6 @@ const QuestionScreen = () => {
     return null;
   }
 
-  const options = [
-    currentQuestion.option1,
-    currentQuestion.option2,
-    currentQuestion.option3,
-    currentQuestion.option4,
-  ];
-
   return (
     <div>
       <div className="flex justify-between">
@@ -144,7 +158,7 @@ const QuestionScreen = () => {
       </div>
       <Question question={currentQuestion.question} />
       <AnswerOptions
-        options={options}
+        shuffledOptions={shuffledOptions}
         selectedAnswer={selectedAnswer}
         handleAnswerChange={handleAnswerChange}
         isChecked={isChecked}

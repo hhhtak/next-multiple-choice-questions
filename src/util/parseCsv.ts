@@ -17,9 +17,7 @@ export const parseCsv = (text: string): QuestionItem[] => {
 
   const counters: Record<string, number> = {};
   const dataWithIds = rawData.map((item) => {
-    console.log("item", item);
     const category = item["category"];
-    console.log("category", category);
     if (!counters[category]) counters[category] = 1;
     const id = `${category.split("-")[0]}-${String(counters[category]++).padStart(
       4,
