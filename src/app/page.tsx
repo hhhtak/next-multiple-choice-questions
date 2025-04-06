@@ -8,11 +8,22 @@ import { useEffect, useState } from "react";
 
 type Field = "it" | "customer" | "product";
 
+// Helper function to shuffle an array
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 const StartScreen = () => {
   const setQuestionData = useSetAtom(questionDataAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
   const [loading, setLoading] = useState(true);
-  const [selectedFields, setSelectedFields] = useState<Field[]>([]); // 選択された分野を保持
+  const [selectedFields, setSelectedFields] = useState<Field[]>([]);
+  const [isRandom, setIsRandom] = useState(false);
   const router = useRouter();
 
   const handleFieldChange = (field: Field) => {
@@ -21,11 +32,15 @@ const StartScreen = () => {
     );
   };
 
+  const handleRandomChange = () => {
+    setIsRandom((prev) => !prev);
+  };
+
   useEffect(() => {
     const fetchCsv = async () => {
       if (selectedFields.length === 0) {
         setLoading(false);
-        return; // 選択されていない場合は読み込まない
+        return;
       }
 
       setLoading(true);
@@ -37,19 +52,24 @@ const StartScreen = () => {
 
       try {
         const csvDataArrays = await Promise.all(csvPromises);
-        const combinedData = csvDataArrays.flat(); // 複数のCSVデータを結合
+        let combinedData = csvDataArrays.flat();
+
+        // isRandom が変更された場合もシャッフルする
+        if (isRandom) {
+          combinedData = shuffleArray(combinedData);
+        }
+
         setQuestionData(combinedData);
         setCurrentIndex(0);
       } catch (error) {
         console.error("CSVファイルの読み込みに失敗しました:", error);
-        // エラー処理を追加
       } finally {
         setLoading(false);
       }
     };
 
     fetchCsv();
-  }, [selectedFields, setQuestionData, setCurrentIndex]);
+  }, [selectedFields, setQuestionData, setCurrentIndex, isRandom]); // isRandom を依存配列に追加
 
   if (loading) return <div>読み込み中...</div>;
 
@@ -57,7 +77,6 @@ const StartScreen = () => {
     <>
       <h1 className="text-2xl mb-4">試験を開始しますか？</h1>
       <div className="mb-4">
-        {/* チェックボックス */}
         <div>
           <input
             type="checkbox"
@@ -86,10 +105,19 @@ const StartScreen = () => {
           <label htmlFor="product">商品分野</label>
         </div>
       </div>
+      <div className="mb-4">
+        <input
+          type="checkbox"
+          id="random"
+          checked={isRandom}
+          onChange={handleRandomChange}
+        />
+        <label htmlFor="random">ランダム</label>
+      </div>
       <button
         onClick={() => router.push("/questions")}
         className="bg-blue-500 text-white px-4 py-2 rounded"
-        disabled={selectedFields.length === 0} // 選択されていない場合はボタンを無効化
+        disabled={selectedFields.length === 0}
       >
         試験スタート
       </button>
