@@ -77,13 +77,13 @@ const AnswerResult = ({
   correctAnswer,
   memo,
   handleNextQuestion,
-  selectedAnswer, // 追加
+  selectedAnswer,
 }: {
   isCorrect: boolean;
   correctAnswer: string;
   memo: string;
   handleNextQuestion: () => void;
-  selectedAnswer: string | null; // 追加
+  selectedAnswer: string | null;
 }) => {
   return (
     <div className="mt-4 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-100">
@@ -95,7 +95,7 @@ const AnswerResult = ({
         )}
       </p>
       <p className="mb-2 text-black">
-        <span className="font-bold">あなたの回答:</span> {selectedAnswer} {/* 追加 */}
+        <span className="font-bold">あなたの回答:</span> {selectedAnswer}
       </p>
       <p className="mb-2 text-black">
         <span className="font-bold">正解:</span> {correctAnswer}
@@ -117,7 +117,7 @@ const AnswerResult = ({
 
 const QuestionScreen = () => {
   const [questionData] = useAtom(questionDataAtom);
-  const [startQuestionIndex] = useAtom(startQuestionIndexAtom); // 開始位置を取得
+  const [startQuestionIndex] = useAtom(startQuestionIndexAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
   const [wrongCount] = useAtom(wrongCountAtom);
@@ -130,16 +130,13 @@ const QuestionScreen = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  // 開始位置以降の問題を抽出
   const filteredQuestionData = useMemo(() => {
     return questionData.slice(startQuestionIndex);
   }, [questionData, startQuestionIndex]);
 
-  // 現在の問題を取得
   const currentQuestion = filteredQuestionData[currentIndex];
   const totalQuestions = filteredQuestionData?.length || 0;
 
-  // 選択肢をシャッフルし、メモ化
   const shuffledOptions = useMemo(() => {
     if (!currentQuestion) return [];
     const options = [
@@ -161,11 +158,10 @@ const QuestionScreen = () => {
         incrementCorrect();
       } else {
         incrementWrong();
-        // 不正解の場合、間違った問題を wrongQuestionsAtom に追加
         setWrongQuestions((prevWrongQuestions) => [
           ...prevWrongQuestions,
           {
-            id: Date.now(), // 一意なIDを生成
+            id: Date.now(),
             question: currentQuestion.question,
             selectedAnswer: selectedAnswer,
             correctAnswer: currentQuestion.answer,
@@ -184,15 +180,10 @@ const QuestionScreen = () => {
     setCurrentIndex((prev) => prev + 1);
   };
 
-  if (!currentQuestion) {
-    router.push("/questions/result");
-    return null;
-  }
-
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <p className="text-lg">カテゴリ: {currentQuestion.category}</p>
+        <p className="text-lg">カテゴリ: {currentQuestion?.category}</p>
         <p className="text-lg">
           問題数: {currentIndex + 1}/{totalQuestions}
         </p>
@@ -202,7 +193,7 @@ const QuestionScreen = () => {
         </div>
       </div>
       <div className="mb-6">
-        <Question question={currentQuestion.question} />
+        <Question question={currentQuestion?.question || ""} />
       </div>
       <div className="mb-6">
         <AnswerOptions
@@ -223,13 +214,22 @@ const QuestionScreen = () => {
       </div>
       {isAnswered && (
         <AnswerResult
-          isCorrect={selectedAnswer === currentQuestion.answer}
-          correctAnswer={currentQuestion.answer}
-          memo={currentQuestion.memo}
+          isCorrect={selectedAnswer === currentQuestion?.answer}
+          correctAnswer={currentQuestion?.answer || ""}
+          memo={currentQuestion?.memo || ""}
           handleNextQuestion={handleNextQuestion}
-          selectedAnswer={selectedAnswer} // 追加
+          selectedAnswer={selectedAnswer}
         />
       )}
+      {/* 結果画面へのボタンを追加 */}
+      <div className="mt-6">
+        <button
+          onClick={() => router.push("/questions/result")}
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          結果画面へ
+        </button>
+      </div>
     </div>
   );
 };
