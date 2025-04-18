@@ -17,7 +17,13 @@ export const currentIndexAtom = atom(0);
 export const correctCountAtom = atom(0);
 export const wrongCountAtom = atom(0);
 export const wrongQuestionsAtom = atom<
-  { question: string; selectedAnswer: string | null; correctAnswer: string }[]
+  {
+    id: string | number;
+    question: string;
+    selectedAnswer: string | null;
+    correctAnswer: string;
+    memo?: string;
+  }[]
 >([]);
 export const incrementCorrectAtom = atom(null, (get, set) => {
   set(correctCountAtom, get(correctCountAtom) + 1);

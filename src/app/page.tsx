@@ -21,12 +21,12 @@ function shuffleArray<T>(array: T[]): T[] {
 const StartScreen = () => {
   const setQuestionData = useSetAtom(questionDataAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
-  const [, setStartQuestionIndex] = useAtom(startQuestionIndexAtom); // 追加
+  const [, setStartQuestionIndex] = useAtom(startQuestionIndexAtom);
   const [loading, setLoading] = useState(true);
   const [selectedFields, setSelectedFields] = useState<Field[]>([]);
   const [isRandom, setIsRandom] = useState(false);
-  const [startIndex, setStartIndex] = useState<number | null>(null); // 追加
-  const [useStartIndex, setUseStartIndex] = useState(false); // 追加
+  const [startIndex, setStartIndex] = useState<number | null>(null);
+  const [useStartIndex, setUseStartIndex] = useState(false);
   const router = useRouter();
 
   const handleFieldChange = (field: Field) => {
@@ -49,9 +49,9 @@ const StartScreen = () => {
   };
 
   const handleStart = () => {
-    let start = 0; // デフォルトは0から開始
+    let start = 0;
     if (useStartIndex && startIndex !== null && startIndex >= 0) {
-      start = startIndex; // チェックボックスがオンで、かつ有効な開始位置が入力されている場合
+      start = startIndex;
     }
     setStartQuestionIndex(start);
     router.push("/questions");
@@ -60,6 +60,8 @@ const StartScreen = () => {
   useEffect(() => {
     const fetchCsv = async () => {
       if (selectedFields.length === 0) {
+        // 初期表示時や選択解除時にデータとローディング状態をリセット
+        setQuestionData([]);
         setLoading(false);
         return;
       }
@@ -67,6 +69,9 @@ const StartScreen = () => {
       setLoading(true);
       const csvPromises = selectedFields.map(async (field) => {
         const res = await fetch(`/csv/${field}.csv`);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch ${field}.csv: ${res.statusText}`);
+        }
         const text = await res.text();
         return parseCsv(text);
       });
@@ -75,121 +80,135 @@ const StartScreen = () => {
         const csvDataArrays = await Promise.all(csvPromises);
         let combinedData = csvDataArrays.flat();
 
-        // isRandom が変更された場合もシャッフルする
         if (isRandom) {
           combinedData = shuffleArray(combinedData);
         }
 
         setQuestionData(combinedData);
-        setCurrentIndex(0);
+        setCurrentIndex(0); // インデックスをリセット
       } catch (error) {
         console.error("CSVファイルの読み込みに失敗しました:", error);
+        // エラー発生時もデータとローディング状態をリセット
+        setQuestionData([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCsv();
-  }, [selectedFields, setQuestionData, setCurrentIndex, isRandom]); // isRandom を依存配列に追加
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFields, isRandom]); // setQuestionData, setCurrentIndex は通常変更されないため依存配列から除外可能
 
-  if (loading) return <div className="text-center">読み込み中...</div>;
+  // ローディング表示に少し余白を追加
+  if (loading && selectedFields.length > 0)
+    return <div className="text-center py-10">読み込み中...</div>;
 
   return (
-    <div className="p-4">
-      {/* 全体の余白を調整 */}
-      <h1 className="text-3xl font-bold mb-6">試験を開始しますか？</h1>
-      {/* 見出しの文字サイズと太字 */}
-      <div className="mb-6 space-y-3">
-        {/* チェックボックスの間隔を調整 */}
-        <div className="flex items-center">
-          {/* チェックボックスとラベルを横並びにする */}
-          <input
-            type="checkbox"
-            id="it"
-            checked={selectedFields.includes("it")}
-            onChange={() => handleFieldChange("it")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
-          />
-          <label htmlFor="it" className="text-lg">
-            IT分野
-          </label>
-        </div>
-        <div className="flex items-center">
-          {/* チェックボックスとラベルを横並びにする */}
-          <input
-            type="checkbox"
-            id="customer"
-            checked={selectedFields.includes("customer")}
-            onChange={() => handleFieldChange("customer")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
-          />
-          <label htmlFor="customer" className="text-lg">
-            顧客分野
-          </label>
-        </div>
-        <div className="flex items-center">
-          {/* チェックボックスとラベルを横並びにする */}
-          <input
-            type="checkbox"
-            id="product"
-            checked={selectedFields.includes("product")}
-            onChange={() => handleFieldChange("product")}
-            className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
-          />
-          <label htmlFor="product" className="text-lg">
-            商品分野
-          </label>
-        </div>
+    // 全体のパディングを調整 (スマホ: p-4, sm以上: p-6)
+    <div className="p-4 sm:p-6">
+      {/* 見出し: スマホでは text-2xl, sm以上で text-3xl */}
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-white">
+        試験を開始しますか？
+      </h1>
+
+      {/* 分野選択: チェックボックス間のスペースを調整 */}
+      <div className="mb-6 space-y-4">
+        <p className="text-lg font-semibold mb-3 text-white">
+          出題分野を選択してください:
+        </p>
+        {/* 各チェックボックス要素 */}
+        {(["it", "customer", "product"] as Field[]).map((field) => (
+          <div key={field} className="flex items-center">
+            <input
+              type="checkbox"
+              id={field}
+              checked={selectedFields.includes(field)}
+              onChange={() => handleFieldChange(field)}
+              // チェックボックスのサイズとフォーカススタイル調整
+              className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+            />
+            {/* ラベル: スマホでは text-base, sm以上で text-lg */}
+            <label htmlFor={field} className="text-base sm:text-lg text-white capitalize">
+              {field === "it" ? "IT分野" : field === "customer" ? "顧客分野" : "商品分野"}
+            </label>
+          </div>
+        ))}
       </div>
+
+      {/* ランダム表示 */}
       <div className="mb-6 flex items-center">
-        {/* チェックボックスとラベルを横並びにする */}
         <input
           type="checkbox"
           id="random"
           checked={isRandom}
           onChange={handleRandomChange}
-          className="mr-3 h-5 w-5 text-blue-600 rounded" // チェックボックスの色を調整
+          className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
         />
-        <label htmlFor="random" className="text-lg">
+        <label htmlFor="random" className="text-base sm:text-lg text-white">
           問題をランダムで表示させる
         </label>
       </div>
+
       {/* 開始位置設定 */}
-      <div className="flex flex-col items-start space-y-2 mb-6">
+      <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
+        {" "}
+        {/* 区切り線とマージン追加 */}
+        <p className="text-lg font-semibold mb-1 text-white">オプション:</p>
+        {/* 開始位置指定チェックボックス */}
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"
             id="useStartIndex"
             checked={useStartIndex}
             onChange={handleCheckboxChange}
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            // サイズ調整
+            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-1"
           />
-          <label htmlFor="useStartIndex" className="text-lg">
-            開始位置を指定する(選択した数値+1から開始します)
+          <label htmlFor="useStartIndex" className="text-base sm:text-lg text-white">
+            開始位置を指定する <span className="text-sm text-white">(0から開始)</span>
           </label>
         </div>
-        <div className="flex items-center space-x-4">
-          <label htmlFor="startIndex" className="text-lg">
-            開始位置:
+        {/* 開始位置入力 */}
+        <div className="flex items-center space-x-3 w-full sm:w-auto pl-7">
+          {" "}
+          {/* チェックボックスに合わせてインデント */}
+          <label
+            htmlFor="startIndex"
+            className="text-base sm:text-lg text-white whitespace-nowrap"
+          >
+            開始番号:
           </label>
           <input
             type="number"
             id="startIndex"
             value={startIndex !== null ? startIndex : ""}
             onChange={handleInputChange}
-            disabled={!useStartIndex} // チェックボックスがオフの場合は無効化
-            className={`border border-gray-300 rounded-md px-3 py-2 text-lg ${
-              !useStartIndex ? "bg-gray-100 cursor-not-allowed" : ""
-            }`}
+            disabled={!useStartIndex}
+            // サイズ、文字サイズ、幅を調整
+            className={`border border-gray-300 rounded-md px-3 py-1.5 text-base sm:text-lg w-24 ${
+              // スマホ用に少し小さく
+              !useStartIndex ? "bg-gray-200 cursor-not-allowed text-gray-500" : ""
+            } focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none`}
+            min="0" // マイナス値を入力できないように
+            placeholder="0"
           />
         </div>
       </div>
+
+      {/* 開始ボタン */}
       <button
         onClick={handleStart}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg disabled:bg-gray-400" // ボタンのスタイルを調整
-        disabled={selectedFields.length === 0}
+        // スマホでは幅いっぱい(w-full), sm以上で自動幅(w-auto)
+        // パディング、文字サイズ、フォーカススタイルを調整
+        className={`w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-150 ease-in-out ${
+          selectedFields.length === 0 || (loading && selectedFields.length > 0)
+            ? "bg-gray-400 cursor-not-allowed" // disabled時のスタイルを明確化
+            : "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        } text-base sm:text-lg`}
+        // disabled 属性を動的に設定
+        disabled={selectedFields.length === 0 || (loading && selectedFields.length > 0)}
       >
-        試験スタート
+        {loading && selectedFields.length > 0 ? "読み込み中..." : "試験スタート"}
       </button>
     </div>
   );

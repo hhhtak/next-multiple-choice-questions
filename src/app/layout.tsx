@@ -25,9 +25,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`} // 背景色を白に変更
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`} // 背景色を少しグレーに
       >
-        <div className="container mx-auto p-4">{children}</div>
+        {/*
+          sm (640px) 未満: 左右に padding (p-4) のみ適用
+          sm (640px) 以上: container クラスを適用 (最大幅設定 + 中央寄せ)
+                         padding は container が持つもの or p-4 を維持
+        */}
+        <div className="min-h-screen p-4 sm:container sm:mx-auto sm:p-6 md:p-8">
+          {/* 画面サイズに応じてパディング調整 */}
+          {children}
+        </div>
       </body>
     </html>
   );

@@ -12,7 +12,7 @@ import {
 } from "@/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react"; // useEffect をインポート
 
 // Helper function to shuffle an array
 function shuffleArray<T>(array: T[]): T[] {
@@ -24,14 +24,19 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+// 問題文コンポーネント
 const Question = ({ question }: { question: string }) => {
   return (
-    <div className="mb-4">
-      <p className="text-xl font-semibold whitespace-pre-wrap">{question}</p>
+    // マージンと文字サイズを調整
+    <div className="mb-4 sm:mb-6">
+      <p className="text-lg sm:text-xl font-semibold whitespace-pre-wrap text-white">
+        {question}
+      </p>
     </div>
   );
 };
 
+// 選択肢コンポーネント
 const AnswerOptions = ({
   shuffledOptions,
   selectedAnswer,
@@ -44,11 +49,26 @@ const AnswerOptions = ({
   isChecked: boolean;
 }) => {
   return (
-    <div className="space-y-3">
+    // 選択肢間のスペースを調整
+    <div className="space-y-3 sm:space-y-4">
       {shuffledOptions.map((option, index) => (
         <div
           key={index}
-          className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-black hover:cursor-pointer"
+          // パディング、ボーダー、ホバー効果、カーソルを調整
+          // isChecked 時のスタイルを追加
+          className={`flex items-center p-3 sm:p-4 border rounded-lg transition-colors duration-150 ease-in-out ${
+            isChecked
+              ? "bg-gray-100 border-gray-300 cursor-default" // チェック後はホバー効果なし
+              : "border-gray-300 hover:bg-blue-50 hover:border-blue-300 cursor-pointer"
+          } ${
+            selectedAnswer === option && !isChecked
+              ? "bg-blue-100 border-blue-400 ring-1 ring-blue-400" // 選択中のスタイル (チェック前)
+              : ""
+          } ${
+            selectedAnswer === option && isChecked
+              ? "bg-gray-200 border-gray-400" // 選択中のスタイル (チェック後)
+              : ""
+          }`}
         >
           <input
             type="radio"
@@ -58,11 +78,15 @@ const AnswerOptions = ({
             checked={selectedAnswer === option}
             onChange={handleAnswerChange}
             disabled={isChecked}
-            className="mr-3 text-blue-600"
+            // ラジオボタンのサイズ、色、フォーカススタイルを調整
+            className="mr-3 h-5 w-5 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <label
             htmlFor={`option${index + 1}`}
-            className="text-lg w-full hover:cursor-pointer"
+            // 文字サイズ、幅、カーソルを調整
+            className={`text-base sm:text-lg w-full ${
+              isChecked ? "cursor-default text-gray-600" : "cursor-pointer text-white"
+            }`}
           >
             {option}
           </label>
@@ -72,6 +96,7 @@ const AnswerOptions = ({
   );
 };
 
+// 回答結果コンポーネント
 const AnswerResult = ({
   isCorrect,
   correctAnswer,
@@ -86,27 +111,39 @@ const AnswerResult = ({
   selectedAnswer: string | null;
 }) => {
   return (
-    <div className="mt-4 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-100">
-      <p className="mb-2">
+    // マージン、パディング、ボーダー、背景色を調整
+    <div className="mt-6 p-4 border rounded-lg shadow-sm bg-white border-gray-300">
+      {/* 正解/不正解表示 */}
+      <p className="mb-3 text-lg sm:text-xl font-bold">
         {isCorrect ? (
-          <span className="text-green-500 font-bold">正解！</span>
+          <span className="text-green-600">✅ 正解！</span>
         ) : (
-          <span className="text-red-500 font-bold">不正解！</span>
+          <span className="text-red-600">❌ 不正解！</span>
         )}
       </p>
-      <p className="mb-2 text-black">
-        <span className="font-bold">あなたの回答:</span> {selectedAnswer}
+      {/* あなたの回答 */}
+      {!isCorrect && ( // 不正解の場合のみ表示
+        <p className="mb-2 text-sm sm:text-base text-gray-600">
+          <span className="font-semibold">あなたの回答:</span>{" "}
+          {selectedAnswer || "未選択"}
+        </p>
+      )}
+      {/* 正解 */}
+      <p className="mb-2 text-sm sm:text-base text-gray-600">
+        <span className="font-semibold">正解:</span> {correctAnswer}
       </p>
-      <p className="mb-2 text-black">
-        <span className="font-bold">正解:</span> {correctAnswer}
-      </p>
-      <p className="mb-2 text-black">
-        <span className="font-bold">メモ:</span> {memo}
-      </p>
+      {/* メモ */}
+      {memo && ( // メモがある場合のみ表示
+        <p className="mb-4 text-sm sm:text-base text-gray-600 whitespace-pre-wrap bg-gray-50 p-3 rounded border border-gray-200">
+          <span className="font-semibold block mb-1">解説:</span> {memo}
+        </p>
+      )}
+      {/* 次の問題へボタン */}
       <div className="mt-4">
         <button
           onClick={handleNextQuestion}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          // ボタンのスタイル調整 (幅、パディング、文字サイズ、フォーカス)
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg"
         >
           次の問題へ
         </button>
@@ -115,7 +152,9 @@ const AnswerResult = ({
   );
 };
 
+// メインの画面コンポーネント
 const QuestionScreen = () => {
+  // --- フック呼び出し (すべてトップレベルに記述) ---
   const [questionData] = useAtom(questionDataAtom);
   const [startQuestionIndex] = useAtom(startQuestionIndexAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
@@ -130,106 +169,234 @@ const QuestionScreen = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
+  // --- useMemo もトップレベルに移動 ---
   const filteredQuestionData = useMemo(() => {
+    // questionData が空の場合や startQuestionIndex が不正な場合は空配列
+    if (
+      !questionData ||
+      questionData.length === 0 ||
+      startQuestionIndex >= questionData.length
+    ) {
+      return [];
+    }
     return questionData.slice(startQuestionIndex);
   }, [questionData, startQuestionIndex]);
 
+  // currentQuestion は filteredQuestionData と currentIndex に依存
+  // filteredQuestionData が空、または currentIndex が範囲外なら undefined
   const currentQuestion = filteredQuestionData[currentIndex];
-  const totalQuestions = filteredQuestionData?.length || 0;
+  const totalQuestions = filteredQuestionData.length;
 
+  // shuffledOptions の useMemo もトップレベルに移動
   const shuffledOptions = useMemo(() => {
+    // currentQuestion が存在しない場合は空配列を返す
     if (!currentQuestion) return [];
     const options = [
       currentQuestion.option1,
       currentQuestion.option2,
       currentQuestion.option3,
       currentQuestion.option4,
-    ];
+    ].filter(Boolean); // filter(Boolean) で null や undefined を除去
+    // currentQuestion が変わるたびにシャッフルされる
     return shuffleArray(options);
-  }, [currentQuestion]);
+  }, [currentQuestion]); // currentQuestion オブジェクト自体が変わった時に再計算
+
+  // --- useEffect もトップレベルに移動 ---
+  useEffect(() => {
+    // 条件を useEffect の中でチェック
+    // filteredQuestionData が確定し、かつ全ての問題が終わった場合に結果画面へ遷移
+    if (totalQuestions > 0 && currentIndex >= totalQuestions) {
+      router.push("/questions/result");
+    }
+    // 依存配列: 条件判定に必要な値を含める
+  }, [currentIndex, totalQuestions, router]); // filteredQuestionData は totalQuestions に含まれる
+
+  // --- ここから条件分岐とJSX ---
+
+  // 1. フィルター後の問題データがない場合 (開始位置が不正 or 元データがない)
+  if (totalQuestions === 0) {
+    // 元の questionData があるかどうかでメッセージを分岐
+    if (questionData.length > 0) {
+      // 開始位置が不正な場合
+      return (
+        <div className="p-4 sm:p-6 text-center text-gray-600">
+          <p className="mb-4 text-lg">指定された開始位置の問題が見つかりません。</p>
+          <button
+            onClick={() => router.push("/")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+          >
+            スタート画面に戻る
+          </button>
+        </div>
+      );
+    } else {
+      // そもそも問題データがない場合 (初期状態など)
+      return (
+        <div className="p-4 sm:p-6 text-center text-gray-600">
+          <p className="mb-4 text-lg">
+            問題データがありません。スタート画面で分野を選択してください。
+          </p>
+          <button
+            onClick={() => router.push("/")}
+            className="mt-4 bg-gray-200 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+          >
+            スタート画面に戻る
+          </button>
+        </div>
+      );
+    }
+  }
+
+  // 2. 現在の問題データ (currentQuestion) がまだ取得できていない場合 (読み込み中など)
+  //    かつ、まだ全ての問題が終わっていない場合 (useEffectでの遷移前)
+  if (!currentQuestion && currentIndex < totalQuestions) {
+    return (
+      <div className="p-4 sm:p-6 text-center text-gray-600">
+        問題を読み込んでいます...
+      </div>
+    );
+  }
+
+  // 3. currentQuestion が確定したら、以下の処理を実行
+  //    (useEffect で結果画面へ遷移する場合、この部分はレンダリングされない)
+
+  // currentQuestion が null/undefined の可能性は上記の条件分岐でほぼ排除されているが、
+  // 安全のため Optional Chaining (?.) や Nullish Coalescing (??) を使う
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedAnswer(event.target.value);
+    if (!isChecked) {
+      setSelectedAnswer(event.target.value);
+    }
   };
 
   const handleCheckAnswer = () => {
-    if (currentQuestion) {
-      if (selectedAnswer === currentQuestion.answer) {
-        incrementCorrect();
-      } else {
-        incrementWrong();
-        setWrongQuestions((prevWrongQuestions) => [
-          ...prevWrongQuestions,
-          {
-            id: Date.now(),
-            question: currentQuestion.question,
-            selectedAnswer: selectedAnswer,
-            correctAnswer: currentQuestion.answer,
-          },
-        ]);
-      }
+    // selectedAnswer と currentQuestion が存在する場合のみ処理
+    if (!selectedAnswer || !currentQuestion) return;
+
+    if (selectedAnswer === currentQuestion.answer) {
+      incrementCorrect();
+    } else {
+      incrementWrong();
+      // 200行目付近のエラー対策: currentQuestion のプロパティに ?? でデフォルト値を与える
+      setWrongQuestions((prevWrongQuestions) => [
+        ...prevWrongQuestions,
+        {
+          // jotai/index.ts の WrongQuestion 型に合わせて調整
+          id: currentQuestion.id ?? String(Date.now()), // id がなければ文字列のタイムスタンプ
+          question: currentQuestion.question ?? "問題文不明",
+          selectedAnswer: selectedAnswer, // selectedAnswer は null でないことが保証されている
+          correctAnswer: currentQuestion.answer ?? "正解不明",
+          category: currentQuestion.category ?? "カテゴリ不明",
+          memo: currentQuestion.memo ?? "",
+        },
+      ]);
     }
     setIsAnswered(true);
     setIsChecked(true);
   };
 
   const handleNextQuestion = () => {
+    // 次の問題がない場合は結果画面へ (useEffect でも遷移するが、ボタン押下時にもチェック)
+    if (currentIndex + 1 >= totalQuestions) {
+      router.push("/questions/result");
+      return;
+    }
+
     setIsAnswered(false);
     setIsChecked(false);
     setSelectedAnswer(null);
+    // 216行目付近のエラー対策: setCurrentIndex 自体は問題ないはず
     setCurrentIndex((prev) => prev + 1);
   };
 
+  // currentQuestion が存在する前提のJSXレンダリング
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <p className="text-lg">カテゴリ: {currentQuestion?.category}</p>
-        <p className="text-lg">
-          問題数: {currentIndex + 1}/{totalQuestions}
+    <div>
+      {/* ヘッダー情報 */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-2 sm:space-y-0 border-b pb-4 border-gray-200">
+        <p className="text-sm sm:text-base text-white">
+          カテゴリ:{" "}
+          <span className="font-medium text-white">
+            {currentQuestion?.category ?? "N/A"} {/* ?. と ?? を併用 */}
+          </span>
         </p>
-        <div className="flex">
-          <p className="mr-4">正解数: {correctCount}</p>
-          <p>不正解数: {wrongCount}</p>
+        <p className="text-sm sm:text-base text-white">
+          問題:{" "}
+          <span className="font-medium text-white">
+            {currentIndex + 1} / {totalQuestions}
+          </span>
+        </p>
+        <div className="flex space-x-4">
+          <p className="text-sm sm:text-base text-green-600">
+            正解: <span className="font-medium">{correctCount}</span>
+          </p>
+          <p className="text-sm sm:text-base text-red-600">
+            不正解: <span className="font-medium">{wrongCount}</span>
+          </p>
         </div>
       </div>
+
+      {/* 問題文 */}
       <div className="mb-6">
-        <Question question={currentQuestion?.question || ""} />
+        <Question question={currentQuestion?.question ?? "問題読込中..."} />
       </div>
+
+      {/* 選択肢 */}
       <div className="mb-6">
         <AnswerOptions
-          shuffledOptions={shuffledOptions}
+          shuffledOptions={shuffledOptions} // useMemo で計算済み
           selectedAnswer={selectedAnswer}
           handleAnswerChange={handleAnswerChange}
           isChecked={isChecked}
         />
       </div>
-      <div className="mt-4">
-        <button
-          onClick={handleCheckAnswer}
-          disabled={isAnswered || selectedAnswer === null}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          確認
-        </button>
-      </div>
-      {isAnswered && (
+
+      {/* 確認ボタン */}
+      {!isAnswered && (
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <button
+            onClick={handleCheckAnswer}
+            disabled={selectedAnswer === null}
+            className={`w-full sm:w-auto bg-blue-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out ${
+              selectedAnswer === null
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            } text-base sm:text-lg`}
+          >
+            回答を確認
+          </button>
+          <button
+            onClick={() => router.push("/questions/result")}
+            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
+          >
+            中断して結果を見る
+          </button>
+        </div>
+      )}
+
+      {/* 回答結果 */}
+      {/* isAnswered が true で、かつ currentQuestion が存在する場合のみ表示 */}
+      {isAnswered && currentQuestion && (
         <AnswerResult
-          isCorrect={selectedAnswer === currentQuestion?.answer}
-          correctAnswer={currentQuestion?.answer || ""}
-          memo={currentQuestion?.memo || ""}
+          isCorrect={selectedAnswer === currentQuestion.answer}
+          correctAnswer={currentQuestion.answer ?? "正解不明"}
+          memo={currentQuestion.memo ?? ""}
           handleNextQuestion={handleNextQuestion}
           selectedAnswer={selectedAnswer}
         />
       )}
-      {/* 結果画面へのボタンを追加 */}
-      <div className="mt-6">
-        <button
-          onClick={() => router.push("/questions/result")}
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-        >
-          結果画面へ
-        </button>
-      </div>
+
+      {/* 最終結果を見るボタン (最後の問題で回答後に表示) */}
+      {isAnswered && currentIndex + 1 === totalQuestions && (
+        <div className="mt-6">
+          <button
+            onClick={() => router.push("/questions/result")}
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base sm:text-lg"
+          >
+            最終結果を見る
+          </button>
+        </div>
+      )}
     </div>
   );
 };
