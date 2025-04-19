@@ -107,13 +107,13 @@ const StartScreen = () => {
     // 全体のパディングを調整 (スマホ: p-4, sm以上: p-6)
     <div className="p-4 sm:p-6">
       {/* 見出し: スマホでは text-2xl, sm以上で text-3xl */}
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-white">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-600">
         試験を開始しますか？
       </h1>
 
       {/* 分野選択: チェックボックス間のスペースを調整 */}
       <div className="mb-6 space-y-4">
-        <p className="text-lg font-semibold mb-3 text-white">
+        <p className="text-lg font-semibold mb-3 text-gray-600">
           出題分野を選択してください:
         </p>
         {/* 各チェックボックス要素 */}
@@ -128,7 +128,10 @@ const StartScreen = () => {
               className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
             />
             {/* ラベル: スマホでは text-base, sm以上で text-lg */}
-            <label htmlFor={field} className="text-base sm:text-lg text-white capitalize">
+            <label
+              htmlFor={field}
+              className="text-base sm:text-lg text-gray-600 capitalize"
+            >
               {field === "it" ? "IT分野" : field === "customer" ? "顧客分野" : "商品分野"}
             </label>
           </div>
@@ -144,7 +147,7 @@ const StartScreen = () => {
           onChange={handleRandomChange}
           className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
         />
-        <label htmlFor="random" className="text-base sm:text-lg text-white">
+        <label htmlFor="random" className="text-base sm:text-lg text-gray-600">
           問題をランダムで表示させる
         </label>
       </div>
@@ -153,7 +156,7 @@ const StartScreen = () => {
       <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
         {" "}
         {/* 区切り線とマージン追加 */}
-        <p className="text-lg font-semibold mb-1 text-white">オプション:</p>
+        <p className="text-lg font-semibold mb-1 text-gray-600">オプション:</p>
         {/* 開始位置指定チェックボックス */}
         <div className="flex items-center space-x-2">
           <input
@@ -164,17 +167,16 @@ const StartScreen = () => {
             // サイズ調整
             className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-1"
           />
-          <label htmlFor="useStartIndex" className="text-base sm:text-lg text-white">
-            開始位置を指定する <span className="text-sm text-white">(0から開始)</span>
+          <label htmlFor="useStartIndex" className="text-base sm:text-lg text-gray-600">
+            開始位置を指定する <span className="text-sm text-gray-600">(0から開始)</span>
           </label>
         </div>
         {/* 開始位置入力 */}
         <div className="flex items-center space-x-3 w-full sm:w-auto pl-7">
-          {" "}
           {/* チェックボックスに合わせてインデント */}
           <label
             htmlFor="startIndex"
-            className="text-base sm:text-lg text-white whitespace-nowrap"
+            className="text-base sm:text-lg text-gray-600 whitespace-nowrap"
           >
             開始番号:
           </label>
@@ -185,9 +187,9 @@ const StartScreen = () => {
             onChange={handleInputChange}
             disabled={!useStartIndex}
             // サイズ、文字サイズ、幅を調整
-            className={`border border-gray-300 rounded-md px-3 py-1.5 text-base sm:text-lg w-24 ${
+            className={`border border-gray-300 rounded-md px-3 py-1.5 text-base sm:text-lg w-24 text-gray-500 ${
               // スマホ用に少し小さく
-              !useStartIndex ? "bg-gray-200 cursor-not-allowed text-gray-500" : ""
+              !useStartIndex ? "bg-gray-200 cursor-not-allowed" : ""
             } focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none`}
             min="0" // マイナス値を入力できないように
             placeholder="0"

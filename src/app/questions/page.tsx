@@ -29,7 +29,7 @@ const Question = ({ question }: { question: string }) => {
   return (
     // マージンと文字サイズを調整
     <div className="mb-4 sm:mb-6">
-      <p className="text-lg sm:text-xl font-semibold whitespace-pre-wrap text-white">
+      <p className="text-lg sm:text-xl font-semibold whitespace-pre-wrap text-gray-600">
         {question}
       </p>
     </div>
@@ -85,7 +85,7 @@ const AnswerOptions = ({
             htmlFor={`option${index + 1}`}
             // 文字サイズ、幅、カーソルを調整
             className={`text-base sm:text-lg w-full ${
-              isChecked ? "cursor-default text-gray-600" : "cursor-pointer text-white"
+              isChecked ? "cursor-default text-gray-600" : "cursor-pointer text-gray-600"
             }`}
           >
             {option}
@@ -143,7 +143,7 @@ const AnswerResult = ({
         <button
           onClick={handleNextQuestion}
           // ボタンのスタイル調整 (幅、パディング、文字サイズ、フォーカス)
-          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg text-white"
         >
           次の問題へ
         </button>
@@ -223,7 +223,7 @@ const QuestionScreen = () => {
           <p className="mb-4 text-lg">指定された開始位置の問題が見つかりません。</p>
           <button
             onClick={() => router.push("/")}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+            className="bg-blue-600 hover:bg-blue-700 text-gray-600 font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
           >
             スタート画面に戻る
           </button>
@@ -238,7 +238,7 @@ const QuestionScreen = () => {
           </p>
           <button
             onClick={() => router.push("/")}
-            className="mt-4 bg-gray-200 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+            className="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
           >
             スタート画面に戻る
           </button>
@@ -314,15 +314,15 @@ const QuestionScreen = () => {
     <div>
       {/* ヘッダー情報 */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-2 sm:space-y-0 border-b pb-4 border-gray-200">
-        <p className="text-sm sm:text-base text-white">
+        <p className="text-sm sm:text-base text-gray-600">
           カテゴリ:{" "}
-          <span className="font-medium text-white">
+          <span className="font-medium text-gray-600">
             {currentQuestion?.category ?? "N/A"} {/* ?. と ?? を併用 */}
           </span>
         </p>
-        <p className="text-sm sm:text-base text-white">
+        <p className="text-sm sm:text-base text-gray-600">
           問題:{" "}
-          <span className="font-medium text-white">
+          <span className="font-medium text-gray-600">
             {currentIndex + 1} / {totalQuestions}
           </span>
         </p>
@@ -367,7 +367,7 @@ const QuestionScreen = () => {
           </button>
           <button
             onClick={() => router.push("/questions/result")}
-            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
+            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
           >
             中断して結果を見る
           </button>

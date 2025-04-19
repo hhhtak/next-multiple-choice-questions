@@ -35,7 +35,7 @@ const ResultScreen = () => {
     // layout.tsx でパディングが適用されるため、ここでは削除
     <div>
       {/* 見出し: スマホでは text-2xl, sm以上で text-3xl */}
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-white">試験結果</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-600">試験結果</h1>
 
       {/* 結果サマリー: カード風のデザイン */}
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200 mb-8">
@@ -57,7 +57,7 @@ const ResultScreen = () => {
       </div>
 
       {/* 間違った問題セクション */}
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-600">
         間違った問題の確認
       </h2>
       {wrongQuestions.length > 0 ? (

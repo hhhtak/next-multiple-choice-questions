@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`} // 背景色を少しグレーに
+        className={`${geistSans.variable} ${geistMono.variable} antialiased text-gray-900`} // 背景色を少しグレーに
       >
         {/*
           sm (640px) 未満: 左右に padding (p-4) のみ適用
