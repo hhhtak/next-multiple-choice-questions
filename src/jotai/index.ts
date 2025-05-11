@@ -32,3 +32,6 @@ export const incrementWrongAtom = atom(null, (get, set) => {
   set(wrongCountAtom, get(wrongCountAtom) + 1);
 });
 export const startQuestionIndexAtom = atom<number>(0);
+
+// スタート画面で設定する「回答を常に表示する」の状態
+export const showAnswersAtom = atom(false);

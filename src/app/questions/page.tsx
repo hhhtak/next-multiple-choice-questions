@@ -6,11 +6,12 @@ import {
   incrementCorrectAtom,
   incrementWrongAtom,
   questionDataAtom,
+  showAnswersAtom,
   startQuestionIndexAtom,
   wrongCountAtom,
   wrongQuestionsAtom,
 } from "@/jotai";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react"; // useEffect をインポート
 
@@ -165,9 +166,15 @@ const QuestionScreen = () => {
   const [, setWrongQuestions] = useAtom(wrongQuestionsAtom);
   const router = useRouter();
 
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isAnswered, setIsAnswered] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  // const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  // const [isAnswered, setIsAnswered] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
+  const showAnswersPermanently = useAtomValue(showAnswersAtom); // 回答常時表示フラグを取得
+
+  // selectedAnswer, isAnswered, isChecked の初期値を showAnswersPermanently に基づいて設定
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null); // 初期値はnullのまま
+  const [isAnswered, setIsAnswered] = useState(showAnswersPermanently);
+  const [isChecked, setIsChecked] = useState(showAnswersPermanently);
 
   // --- useMemo もトップレベルに移動 ---
   const filteredQuestionData = useMemo(() => {
@@ -210,6 +217,15 @@ const QuestionScreen = () => {
     }
     // 依存配列: 条件判定に必要な値を含める
   }, [currentIndex, totalQuestions, router]); // filteredQuestionData は totalQuestions に含まれる
+
+  // showAnswersPermanently が true の場合、selectedAnswer を正解に設定し、採点処理はスキップ
+  useEffect(() => {
+    if (showAnswersPermanently && currentQuestion) {
+      setSelectedAnswer(currentQuestion.answer);
+      setIsAnswered(true); // 回答済みとして扱う
+      setIsChecked(true); // チェック済み（操作不可）として扱う
+    }
+  }, [showAnswersPermanently, currentQuestion]);
 
   // --- ここから条件分岐とJSX ---
 
@@ -264,14 +280,15 @@ const QuestionScreen = () => {
   // 安全のため Optional Chaining (?.) や Nullish Coalescing (??) を使う
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isChecked) {
+    if (!isChecked && !showAnswersPermanently) {
+      // 常時表示モードでは選択不可
       setSelectedAnswer(event.target.value);
     }
   };
 
   const handleCheckAnswer = () => {
-    // selectedAnswer と currentQuestion が存在する場合のみ処理
-    if (!selectedAnswer || !currentQuestion) return;
+    // selectedAnswer, currentQuestion が存在し、かつ常時表示モードでない場合のみ処理
+    if (!selectedAnswer || !currentQuestion || showAnswersPermanently) return;
 
     if (selectedAnswer === currentQuestion.answer) {
       incrementCorrect();
@@ -302,10 +319,21 @@ const QuestionScreen = () => {
       return;
     }
 
-    setIsAnswered(false);
-    setIsChecked(false);
-    setSelectedAnswer(null);
-    // 216行目付近のエラー対策: setCurrentIndex 自体は問題ないはず
+    // setIsAnswered(false);
+    // setIsChecked(false);
+    // setSelectedAnswer(null);
+    // // 216行目付近のエラー対策: setCurrentIndex 自体は問題ないはず
+    // 常時表示モードの場合は、次の問題でも回答済み・チェック済み状態を維持
+    setIsAnswered(showAnswersPermanently);
+    setIsChecked(showAnswersPermanently);
+    if (showAnswersPermanently) {
+      // selectedAnswer は次の問題の useEffect で設定されるのでここでは null にしない
+      // もし即座に次の問題の正解をセットしたい場合は、ここでも currentQuestion の次の問題の answer を使う必要があるが、
+      // useEffect に任せる方がシンプル
+    } else {
+      setSelectedAnswer(null);
+    }
+
     setCurrentIndex((prev) => prev + 1);
   };
 
@@ -347,47 +375,54 @@ const QuestionScreen = () => {
           shuffledOptions={shuffledOptions} // useMemo で計算済み
           selectedAnswer={selectedAnswer}
           handleAnswerChange={handleAnswerChange}
-          isChecked={isChecked}
+          isChecked={isChecked || showAnswersPermanently} // 常時表示なら常にチェック済み扱い
         />
       </div>
 
       {/* 確認ボタン */}
-      {!isAnswered && (
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
-          <button
-            onClick={handleCheckAnswer}
-            disabled={selectedAnswer === null}
-            className={`w-full sm:w-auto bg-blue-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out ${
-              selectedAnswer === null
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            } text-base sm:text-lg`}
-          >
-            回答を確認
-          </button>
-          <button
-            onClick={() => router.push("/questions/result")}
-            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
-          >
-            中断して結果を見る
-          </button>
-        </div>
-      )}
+      {!isAnswered &&
+        !showAnswersPermanently && ( // 常時表示モードでは表示しない
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
+            <button
+              onClick={handleCheckAnswer}
+              disabled={selectedAnswer === null}
+              className={`w-full sm:w-auto bg-blue-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out ${
+                selectedAnswer === null
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              } text-base sm:text-lg`}
+            >
+              回答を確認
+            </button>
+            <button
+              onClick={() => router.push("/questions/result")}
+              className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
+            >
+              中断して結果を見る
+            </button>
+          </div>
+        )}
 
       {/* 回答結果 */}
       {/* isAnswered が true で、かつ currentQuestion が存在する場合のみ表示 */}
-      {isAnswered && currentQuestion && (
-        <AnswerResult
-          isCorrect={selectedAnswer === currentQuestion.answer}
-          correctAnswer={currentQuestion.answer ?? "正解不明"}
-          memo={currentQuestion.memo ?? ""}
-          handleNextQuestion={handleNextQuestion}
-          selectedAnswer={selectedAnswer}
-        />
-      )}
+      {(isAnswered || showAnswersPermanently) &&
+        currentQuestion && ( // 常時表示モードでも表示
+          <AnswerResult
+            isCorrect={
+              showAnswersPermanently ? true : selectedAnswer === currentQuestion.answer
+            } // 常時表示なら常に正解
+            correctAnswer={currentQuestion.answer ?? "正解不明"}
+            memo={currentQuestion.memo ?? ""}
+            handleNextQuestion={handleNextQuestion}
+            selectedAnswer={
+              showAnswersPermanently ? currentQuestion.answer : selectedAnswer
+            } // 常時表示なら正解を表示
+          />
+        )}
 
       {/* 最終結果を見るボタン (最後の問題で回答後に表示) */}
-      {isAnswered && currentIndex + 1 === totalQuestions && (
+      {/* 常時表示モードでも、最後の問題で「次の問題へ」の代わりに表示されるようにする */}
+      {(isAnswered || showAnswersPermanently) && currentIndex + 1 === totalQuestions && (
         <div className="mt-6">
           <button
             onClick={() => router.push("/questions/result")}

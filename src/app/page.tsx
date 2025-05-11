@@ -1,6 +1,11 @@
 "use client";
 
-import { currentIndexAtom, questionDataAtom, startQuestionIndexAtom } from "@/jotai";
+import {
+  currentIndexAtom,
+  questionDataAtom,
+  showAnswersAtom,
+  startQuestionIndexAtom,
+} from "@/jotai";
 import { parseCsv } from "@/util/parseCsv";
 import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -27,6 +32,7 @@ const StartScreen = () => {
   const [isRandom, setIsRandom] = useState(false);
   const [startIndex, setStartIndex] = useState<number | null>(null);
   const [useStartIndex, setUseStartIndex] = useState(false);
+  const [showAnswers, setShowAnswers] = useAtom(showAnswersAtom); // Jotai atom を使用
   const router = useRouter();
 
   const handleFieldChange = (field: Field) => {
@@ -46,6 +52,10 @@ const StartScreen = () => {
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUseStartIndex(event.target.checked);
+  };
+
+  const handleShowAnswersChange = () => {
+    setShowAnswers((prev) => !prev);
   };
 
   const handleStart = () => {
@@ -194,6 +204,20 @@ const StartScreen = () => {
             min="0" // マイナス値を入力できないように
             placeholder="0"
           />
+        </div>
+        {/* 回答を確認するチェックボックス */}
+        <div className="flex items-center space-x-2 pt-2">
+          <input
+            type="checkbox"
+            id="showAnswers"
+            checked={showAnswers}
+            onChange={handleShowAnswersChange}
+            className="w-5 h-5 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 focus:ring-offset-1"
+          />
+          <label htmlFor="showAnswers" className="text-base sm:text-lg text-gray-600">
+            回答を常に表示する (デバッグ用)
+            {/* TODO: この機能の具体的な実装は別途必要です */}
+          </label>
         </div>
       </div>
 
