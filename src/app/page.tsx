@@ -148,25 +148,23 @@ const StartScreen = () => {
         ))}
       </div>
 
-      {/* ランダム表示 */}
-      <div className="mb-6 flex items-center">
-        <input
-          type="checkbox"
-          id="random"
-          checked={isRandom}
-          onChange={handleRandomChange}
-          className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
-        />
-        <label htmlFor="random" className="text-base sm:text-lg text-gray-600">
-          問題をランダムで表示させる
-        </label>
-      </div>
-
       {/* 開始位置設定 */}
       <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
-        {" "}
         {/* 区切り線とマージン追加 */}
         <p className="text-lg font-semibold mb-1 text-gray-600">オプション:</p>
+        {/* ランダム表示 */}
+        <div className="mb-6 flex items-center">
+          <input
+            type="checkbox"
+            id="random"
+            checked={isRandom}
+            onChange={handleRandomChange}
+            className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+          />
+          <label htmlFor="random" className="text-base sm:text-lg text-gray-600">
+            問題をランダムで表示させる
+          </label>
+        </div>
         {/* 開始位置指定チェックボックス */}
         <div className="flex items-center space-x-2">
           <input
@@ -215,7 +213,7 @@ const StartScreen = () => {
             className="w-5 h-5 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 focus:ring-offset-1"
           />
           <label htmlFor="showAnswers" className="text-base sm:text-lg text-gray-600">
-            回答を常に表示する (デバッグ用)
+            回答を常に表示する
             {/* TODO: この機能の具体的な実装は別途必要です */}
           </label>
         </div>
