@@ -43,56 +43,70 @@ const AnswerOptions = ({
   selectedAnswer,
   handleAnswerChange,
   isChecked,
+  correctAnswer,
 }: {
   shuffledOptions: string[];
   selectedAnswer: string | null;
   handleAnswerChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   isChecked: boolean;
+  correctAnswer: string | null;
 }) => {
   return (
     // 選択肢間のスペースを調整
     <div className="space-y-3 sm:space-y-4">
-      {shuffledOptions.map((option, index) => (
-        <div
-          key={index}
-          // パディング、ボーダー、ホバー効果、カーソルを調整
-          // isChecked 時のスタイルを追加
-          className={`flex items-center p-3 sm:p-4 border rounded-lg transition-colors duration-150 ease-in-out ${
-            isChecked
-              ? "bg-gray-100 border-gray-300 cursor-default" // チェック後はホバー効果なし
-              : "border-gray-300 hover:bg-blue-50 hover:border-blue-300 cursor-pointer"
-          } ${
-            selectedAnswer === option && !isChecked
-              ? "bg-blue-100 border-blue-400 ring-1 ring-blue-400" // 選択中のスタイル (チェック前)
-              : ""
-          } ${
-            selectedAnswer === option && isChecked
-              ? "bg-gray-200 border-gray-400" // 選択中のスタイル (チェック後)
-              : ""
-          }`}
-        >
-          <input
-            type="radio"
-            id={`option${index + 1}`}
-            name="answer"
-            value={option}
-            checked={selectedAnswer === option}
-            onChange={handleAnswerChange}
-            disabled={isChecked}
-            // ラジオボタンのサイズ、色、フォーカススタイルを調整
-            className="mr-3 h-5 w-5 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <label
-            htmlFor={`option${index + 1}`}
-            // 文字サイズ、幅、カーソルを調整
-            className={`text-base sm:text-lg w-full ${
-              isChecked ? "cursor-default text-gray-600" : "cursor-pointer text-gray-600"
-            }`}
-          >
-            {option}
-          </label>
-        </div>
-      ))}
+      {shuffledOptions.map((option, index) => {
+        const isCorrectOption = correctAnswer === option;
+        const isSelectedOption = selectedAnswer === option;
+
+        let optionContainerClasses =
+          "flex items-center p-3 sm:p-4 border rounded-lg transition-colors duration-150 ease-in-out";
+        let labelClasses = "text-base sm:text-lg w-full";
+
+        if (isChecked) {
+          optionContainerClasses += " cursor-default";
+          labelClasses += " cursor-default";
+
+          if (isCorrectOption) {
+            optionContainerClasses +=
+              " bg-green-50 border-green-500 ring-1 ring-green-500";
+            labelClasses += " text-green-700 font-semibold";
+          } else if (isSelectedOption) {
+            // ユーザーが選択したが、正解ではない場合
+            optionContainerClasses += " bg-red-50 border-red-500 ring-1 ring-red-500";
+            labelClasses += " text-red-700";
+          } else {
+            // 正解でもなく、ユーザーが選択したものでもない場合 (回答確認後)
+            optionContainerClasses += " bg-gray-100 border-gray-300";
+            labelClasses += " text-gray-500"; // 少し薄い色で非強調
+          }
+        } else {
+          // isChecked が false (回答確認前)
+          optionContainerClasses +=
+            " border-gray-300 hover:bg-blue-50 hover:border-blue-300 cursor-pointer";
+          labelClasses += " cursor-pointer text-gray-700"; // 通常の文字色
+          if (isSelectedOption) {
+            optionContainerClasses += " bg-blue-100 border-blue-400 ring-1 ring-blue-400"; // 選択中のスタイル
+          }
+        }
+
+        return (
+          <div key={index} className={optionContainerClasses}>
+            <input
+              type="radio"
+              id={`option${index + 1}`}
+              name="answer"
+              value={option}
+              checked={isSelectedOption}
+              onChange={handleAnswerChange}
+              disabled={isChecked}
+              className="mr-3 h-5 w-5 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <label htmlFor={`option${index + 1}`} className={labelClasses}>
+              {option}
+            </label>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -376,6 +390,7 @@ const QuestionScreen = () => {
           selectedAnswer={selectedAnswer}
           handleAnswerChange={handleAnswerChange}
           isChecked={isChecked || showAnswersPermanently} // 常時表示なら常にチェック済み扱い
+          correctAnswer={currentQuestion?.answer ?? null}
         />
       </div>
 
