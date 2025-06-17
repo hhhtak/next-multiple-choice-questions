@@ -180,9 +180,6 @@ const QuestionScreen = () => {
   const [, setWrongQuestions] = useAtom(wrongQuestionsAtom);
   const router = useRouter();
 
-  // const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  // const [isAnswered, setIsAnswered] = useState(false);
-  // const [isChecked, setIsChecked] = useState(false);
   const showAnswersPermanently = useAtomValue(showAnswersAtom); // 回答常時表示フラグを取得
 
   // selectedAnswer, isAnswered, isChecked の初期値を showAnswersPermanently に基づいて設定
@@ -308,17 +305,13 @@ const QuestionScreen = () => {
       incrementCorrect();
     } else {
       incrementWrong();
-      // 200行目付近のエラー対策: currentQuestion のプロパティに ?? でデフォルト値を与える
+      // currentQuestion (QuestionItem型) の全プロパティをコピーし、
+      // selectedAnswer を追加して WrongQuestionItem 型のオブジェクトを作成する
       setWrongQuestions((prevWrongQuestions) => [
         ...prevWrongQuestions,
         {
-          // jotai/index.ts の WrongQuestion 型に合わせて調整
-          id: currentQuestion.id ?? String(Date.now()), // id がなければ文字列のタイムスタンプ
-          question: currentQuestion.question ?? "問題文不明",
-          selectedAnswer: selectedAnswer, // selectedAnswer は null でないことが保証されている
-          correctAnswer: currentQuestion.answer ?? "正解不明",
-          category: currentQuestion.category ?? "カテゴリ不明",
-          memo: currentQuestion.memo ?? "",
+          ...currentQuestion, // QuestionItem の全プロパティをスプレッド
+          selectedAnswer: selectedAnswer, // ユーザーが選択した回答を追加
         },
       ]);
     }
@@ -333,17 +326,11 @@ const QuestionScreen = () => {
       return;
     }
 
-    // setIsAnswered(false);
-    // setIsChecked(false);
-    // setSelectedAnswer(null);
-    // // 216行目付近のエラー対策: setCurrentIndex 自体は問題ないはず
     // 常時表示モードの場合は、次の問題でも回答済み・チェック済み状態を維持
     setIsAnswered(showAnswersPermanently);
     setIsChecked(showAnswersPermanently);
     if (showAnswersPermanently) {
       // selectedAnswer は次の問題の useEffect で設定されるのでここでは null にしない
-      // もし即座に次の問題の正解をセットしたい場合は、ここでも currentQuestion の次の問題の answer を使う必要があるが、
-      // useEffect に任せる方がシンプル
     } else {
       setSelectedAnswer(null);
     }

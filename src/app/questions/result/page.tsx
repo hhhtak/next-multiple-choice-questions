@@ -1,8 +1,8 @@
 "use client";
-
 import {
   correctCountAtom,
   currentIndexAtom,
+  questionsForRetryAtom, // 追加: 再挑戦用の問題リストを管理するatom
   wrongCountAtom,
   wrongQuestionsAtom,
 } from "@/jotai";
@@ -10,26 +10,43 @@ import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 const ResultScreen = () => {
-  // --- ロジック部分は変更なし ---
   const [correctCount, setCorrectCount] = useAtom(correctCountAtom);
   const [wrongCount, setWrongCount] = useAtom(wrongCountAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
-  // setCorrectCount, setWrongCount は useAtom から取得済みなので useSetAtom は不要
-  // const setCorrectCount = useSetAtom(correctCountAtom);
-  // const setWrongCount = useSetAtom(wrongCountAtom);
+  const setQuestionsForRetry = useSetAtom(questionsForRetryAtom); // 追加
   const [wrongQuestions, setWrongQuestions] = useAtom(wrongQuestionsAtom);
   const router = useRouter();
 
   const handleBackToTop = () => {
     setCurrentIndex(0);
-    setCorrectCount(0); // useAtom から取得した setter を使用
-    setWrongCount(0); // useAtom から取得した setter を使用
+    setCorrectCount(0);
+    setWrongCount(0);
     setWrongQuestions([]);
+    setQuestionsForRetry(null); // 再挑戦リストをクリア
     router.push("/");
   };
 
+  // 追加: 間違った問題を再度解く処理
+  const handleRetryWrongQuestions = () => {
+    if (wrongQuestions.length === 0) return;
+
+    // WrongQuestionItem型からselectedAnswerプロパティを除外し、QuestionItem[]型に変換
+    const questionsToRetry = wrongQuestions.map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ({ selectedAnswer, ...questionData }) => questionData
+    );
+
+    setQuestionsForRetry(questionsToRetry);
+    setCurrentIndex(0);
+    setCorrectCount(0);
+    setWrongCount(0);
+    // wrongQuestionsAtom はここではクリアしない。
+    // 再挑戦後にこの結果画面に戻ることは想定していないが、
+    // もし戻った場合でも間違った問題リストは保持されている方が自然なため。
+    router.push("/questions"); // クイズページに遷移
+  };
+
   const totalAnswered = correctCount + wrongCount; // 回答総数を計算
-  // --- ロジック部分は変更なし ここまで ---
 
   return (
     // layout.tsx でパディングが適用されるため、ここでは削除
@@ -82,9 +99,7 @@ const ResultScreen = () => {
               {/* 正解 */}
               <p className="text-sm sm:text-base text-gray-600">
                 正解:{" "}
-                <span className="text-green-600 font-medium">
-                  {wrongQuestion.correctAnswer}
-                </span>
+                <span className="text-green-600 font-medium">{wrongQuestion.answer}</span>
               </p>
               {/* 解説 (メモ) があれば表示 (memo プロパティが型に存在する場合) */}
               {wrongQuestion.memo && (
@@ -102,17 +117,22 @@ const ResultScreen = () => {
         </p>
       )}
 
-      {/* トップに戻るボタン */}
-      <div className="mt-8 text-center sm:text-left">
-        {/* ボタンの余白と配置を調整 */}
+      {/* ボタンセクション */}
+      <div className="mt-8 flex flex-col sm:flex-row sm:justify-start sm:space-x-4 space-y-4 sm:space-y-0">
         <button
           onClick={handleBackToTop}
-          // スマホでは幅いっぱい、sm以上で自動幅
-          // パディング、文字サイズ、フォーカススタイルを調整
           className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg"
         >
           トップに戻る
         </button>
+        {wrongQuestions.length > 0 && (
+          <button
+            onClick={handleRetryWrongQuestions}
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base sm:text-lg"
+          >
+            間違った問題を再度解く
+          </button>
+        )}
       </div>
     </div>
   );
