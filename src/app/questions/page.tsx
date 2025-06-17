@@ -6,6 +6,7 @@ import {
   incrementCorrectAtom,
   incrementWrongAtom,
   questionDataAtom,
+  questionsForRetryAtom, // 追加: 再挑戦用の問題リストを管理するatom
   showAnswersAtom,
   startQuestionIndexAtom,
   wrongCountAtom,
@@ -13,7 +14,7 @@ import {
 } from "@/jotai";
 import { useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react"; // useEffect をインポート
+import React, { useCallback, useEffect, useMemo, useState } from "react"; // useCallback を追加
 
 // Helper function to shuffle an array
 function shuffleArray<T>(array: T[]): T[] {
@@ -170,7 +171,8 @@ const AnswerResult = ({
 // メインの画面コンポーネント
 const QuestionScreen = () => {
   // --- フック呼び出し (すべてトップレベルに記述) ---
-  const [questionData] = useAtom(questionDataAtom);
+  const [initialQuestionData] = useAtom(questionDataAtom); // 元のデータソース
+  const [questionsForRetry, setQuestionsForRetry] = useAtom(questionsForRetryAtom); // 再挑戦用リストとセッター
   const [startQuestionIndex] = useAtom(startQuestionIndexAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
@@ -187,18 +189,33 @@ const QuestionScreen = () => {
   const [isAnswered, setIsAnswered] = useState(showAnswersPermanently);
   const [isChecked, setIsChecked] = useState(showAnswersPermanently);
 
+  // 現在アクティブな問題リストを決定
+  // questionsForRetry があればそれを使い、なければ initialQuestionData を使う
+  const activeQuestionData = useMemo(() => {
+    return questionsForRetry && questionsForRetry.length > 0
+      ? questionsForRetry
+      : initialQuestionData;
+  }, [questionsForRetry, initialQuestionData]);
+
   // --- useMemo もトップレベルに移動 ---
   const filteredQuestionData = useMemo(() => {
-    // questionData が空の場合や startQuestionIndex が不正な場合は空配列
+    // activeQuestionData が空の場合は空配列
+    if (!activeQuestionData || activeQuestionData.length === 0) {
+      return [];
+    }
+    // 再挑戦モードの場合 (activeQuestionData が questionsForRetry由来) は、startQuestionIndex を無視
+    // ResultScreenでcurrentIndexAtomが0にリセットされるため、実質的にリスト全体が対象となる
+    if (questionsForRetry && questionsForRetry.length > 0) {
+      return activeQuestionData;
+    }
+    // 通常モードの場合のみ startQuestionIndex を適用
     if (
-      !questionData ||
-      questionData.length === 0 ||
-      startQuestionIndex >= questionData.length
+      startQuestionIndex >= activeQuestionData.length // activeQuestionData は initialQuestionData
     ) {
       return [];
     }
-    return questionData.slice(startQuestionIndex);
-  }, [questionData, startQuestionIndex]);
+    return activeQuestionData.slice(startQuestionIndex);
+  }, [activeQuestionData, startQuestionIndex, questionsForRetry]);
 
   // currentQuestion は filteredQuestionData と currentIndex に依存
   // filteredQuestionData が空、または currentIndex が範囲外なら undefined
@@ -219,15 +236,23 @@ const QuestionScreen = () => {
     return shuffleArray(options);
   }, [currentQuestion]); // currentQuestion オブジェクト自体が変わった時に再計算
 
+  // 結果画面へ遷移する際に questionsForRetry をクリアする処理
+  const goToResultScreen = useCallback(() => {
+    if (questionsForRetry && questionsForRetry.length > 0) {
+      setQuestionsForRetry(null); // 再挑戦リストをクリア
+    }
+    router.push("/questions/result");
+  }, [questionsForRetry, setQuestionsForRetry, router]);
+
   // --- useEffect もトップレベルに移動 ---
   useEffect(() => {
     // 条件を useEffect の中でチェック
     // filteredQuestionData が確定し、かつ全ての問題が終わった場合に結果画面へ遷移
     if (totalQuestions > 0 && currentIndex >= totalQuestions) {
-      router.push("/questions/result");
+      goToResultScreen();
     }
     // 依存配列: 条件判定に必要な値を含める
-  }, [currentIndex, totalQuestions, router]); // filteredQuestionData は totalQuestions に含まれる
+  }, [currentIndex, totalQuestions, goToResultScreen]); // goToResultScreen を依存配列に追加
 
   // showAnswersPermanently が true の場合、selectedAnswer を正解に設定し、採点処理はスキップ
   useEffect(() => {
@@ -240,17 +265,34 @@ const QuestionScreen = () => {
 
   // --- ここから条件分岐とJSX ---
 
-  // 1. フィルター後の問題データがない場合 (開始位置が不正 or 元データがない)
+  // 1. フィルター後の問題データがない場合 (totalQuestions === 0)
   if (totalQuestions === 0) {
-    // 元の questionData があるかどうかでメッセージを分岐
-    if (questionData.length > 0) {
-      // 開始位置が不正な場合
+    // 再挑戦モードで問題がない場合 (通常は発生しないはずが、念のため)
+    if (questionsForRetry && questionsForRetry.length === 0) {
+      return (
+        <div className="p-4 sm:p-6 text-center text-gray-600">
+          <p className="mb-4 text-lg">再挑戦する問題がありません。</p>
+          <button
+            onClick={() => router.push("/")}
+            className="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+          >
+            トップに戻る
+          </button>
+        </div>
+      );
+    }
+    // 通常モードで、initialQuestionData はあるが startQuestionIndex が不正な場合
+    else if (
+      initialQuestionData.length > 0 &&
+      (!questionsForRetry || questionsForRetry.length === 0)
+    ) {
       return (
         <div className="p-4 sm:p-6 text-center text-gray-600">
           <p className="mb-4 text-lg">指定された開始位置の問題が見つかりません。</p>
           <button
             onClick={() => router.push("/")}
-            className="bg-blue-600 hover:bg-blue-700 text-gray-600 font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
+            // text-gray-600 は青背景で見えにくいため text-white に変更
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out"
           >
             スタート画面に戻る
           </button>
@@ -322,7 +364,7 @@ const QuestionScreen = () => {
   const handleNextQuestion = () => {
     // 次の問題がない場合は結果画面へ (useEffect でも遷移するが、ボタン押下時にもチェック)
     if (currentIndex + 1 >= totalQuestions) {
-      router.push("/questions/result");
+      goToResultScreen();
       return;
     }
 
@@ -397,7 +439,7 @@ const QuestionScreen = () => {
               回答を確認
             </button>
             <button
-              onClick={() => router.push("/questions/result")}
+              onClick={goToResultScreen}
               className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out text-base sm:text-lg"
             >
               中断して結果を見る
@@ -427,7 +469,7 @@ const QuestionScreen = () => {
       {(isAnswered || showAnswersPermanently) && currentIndex + 1 === totalQuestions && (
         <div className="mt-6">
           <button
-            onClick={() => router.push("/questions/result")}
+            onClick={goToResultScreen}
             className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base sm:text-lg"
           >
             最終結果を見る

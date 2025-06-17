@@ -31,7 +31,12 @@ const ResultScreen = () => {
     if (wrongQuestions.length === 0) return;
 
     // WrongQuestionItem型からselectedAnswerプロパティを除外し、QuestionItem[]型に変換
-    const questionsToRetry = wrongQuestions.map(
+    // まず重複を排除したリストを作成
+    const uniqueRetryQuestions = wrongQuestions.filter(
+      (question, index, self) => index === self.findIndex((q) => q.id === question.id)
+    );
+
+    const questionsToRetry = uniqueRetryQuestions.map(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ({ selectedAnswer, ...questionData }) => questionData
     );
@@ -40,13 +45,17 @@ const ResultScreen = () => {
     setCurrentIndex(0);
     setCorrectCount(0);
     setWrongCount(0);
-    // wrongQuestionsAtom はここではクリアしない。
-    // 再挑戦後にこの結果画面に戻ることは想定していないが、
-    // もし戻った場合でも間違った問題リストは保持されている方が自然なため。
+    // 再挑戦する問題リストをセットしたら、元の間違った問題リストはクリアする。
+    setWrongQuestions([]); // これにより、次回の結果画面では再挑戦の結果のみが「間違った問題」として扱われる。
     router.push("/questions"); // クイズページに遷移
   };
 
   const totalAnswered = correctCount + wrongCount; // 回答総数を計算
+
+  // 間違った問題のリストから重複を排除する (id を基準)
+  const uniqueWrongQuestions = wrongQuestions.filter(
+    (question, index, self) => index === self.findIndex((q) => q.id === question.id)
+  );
 
   return (
     // layout.tsx でパディングが適用されるため、ここでは削除
@@ -77,10 +86,10 @@ const ResultScreen = () => {
       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-600">
         間違った問題の確認
       </h2>
-      {wrongQuestions.length > 0 ? (
+      {uniqueWrongQuestions.length > 0 ? (
         <ul className="space-y-4">
           {/* リストの間隔を調整 */}
-          {wrongQuestions.map((wrongQuestion, index) => (
+          {uniqueWrongQuestions.map((wrongQuestion, index) => (
             <li
               key={wrongQuestion.id ?? index} // 可能なら固有IDを使用 (jotai/index.ts の型定義に依存)
               className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white" // 背景を白に、ボーダーを少し薄く
@@ -125,7 +134,7 @@ const ResultScreen = () => {
         >
           トップに戻る
         </button>
-        {wrongQuestions.length > 0 && (
+        {uniqueWrongQuestions.length > 0 && ( // 重複排除後のリストでボタン表示を判定
           <button
             onClick={handleRetryWrongQuestions}
             className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base sm:text-lg"
