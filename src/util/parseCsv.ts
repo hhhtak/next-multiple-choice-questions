@@ -1,6 +1,6 @@
 // /util/parseCsv.ts
 
-import { QuestionItem } from "@/jotai";
+import { QuestionItem } from "@/types";
 
 export const parseCsv = (csvText: string): QuestionItem[] => {
   const lines = csvText.split("\n");
