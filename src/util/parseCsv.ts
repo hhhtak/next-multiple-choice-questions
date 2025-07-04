@@ -15,7 +15,7 @@ export const parseCsv = (csvText: string): QuestionItem[] => {
     const row: { [key: string]: string } = {};
 
     for (let j = 0; j < headers.length; j++) {
-      let value = values[j].replace(/^"|"$/g, "").replace(/""/g, '"'); // ダブルクォートを削除し、エスケープされたダブルクォートを戻す
+      let value = (values[j] || "").replace(/^"|"$/g, "").replace(/""/g, '"'); // ダブルクォートを削除し、エスケープされたダブルクォートを戻す
       // 改行コードを \\n に置き換える
       if (value.includes("\n")) {
         value = value.replace(/\n/g, "\\n");
