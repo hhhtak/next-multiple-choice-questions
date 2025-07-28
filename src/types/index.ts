@@ -1,7 +1,7 @@
 export type Field = "it" | "customer" | "product";
 
 export interface QuestionItem {
-  id: number;
+  id: string;
   category: string;
   question: string;
   option1: string;

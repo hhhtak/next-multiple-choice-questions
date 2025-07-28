@@ -4,7 +4,10 @@ import { QuestionItem } from "@/types";
 
 export const parseCsv = (csvText: string): QuestionItem[] => {
   const lines = csvText.split("\n");
-  const headers = lines[0].split(",");
+  const headers = lines[0]
+    .split(",")
+    .map((h) => h.trim().replace(/^"|"$/g, ""))
+    .filter(Boolean); // 末尾のカンマによる空のヘッダーを削除
   const data: QuestionItem[] = [];
 
   for (let i = 1; i < lines.length; i++) {
@@ -25,7 +28,7 @@ export const parseCsv = (csvText: string): QuestionItem[] => {
 
     // QuestionItem 型に変換
     const questionItem: QuestionItem = {
-      id: Date.now() + i, // 一意なIDを生成
+      id: row["no"],
       category: row["category"],
       question: row["question"],
       option1: row["option1"],
