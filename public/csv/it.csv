@@ -1,3 +1,3 @@
-category,question,option1,option2,option3,option4,memo,answer
-IT分野-Chapter1,IPアドレスの正しい形式はどれ？,192.168.1.1,999.999.999.999,300.300.300.300,abc.def.ghi.jkl,ITテキストP10,192.168.1.1
-IT分野-Chapter2,TCPとUDPの違いは？,どちらも同じ,UDPは接続型,TCPはコネクションレス,TCPは信頼性が高い,ITテキストP12,TCPは信頼性が高い
+no,memo,category,question,option1,option2,option3,option4,answer,
+1,ITテキストP10,IT分野-Chapter1,IPアドレスの正しい形式はどれ？,192.168.1.1,999.999.999.999,300.300.300.300,abc.def.ghi.jkl,192.168.1.1,
+2,ITテキストP12,IT分野-Chapter2,TCPとUDPの違いは？,どちらも同じ,UDPは接続型,TCPはコネクションレス,TCPは信頼性が高い,TCPは信頼性が高い,
