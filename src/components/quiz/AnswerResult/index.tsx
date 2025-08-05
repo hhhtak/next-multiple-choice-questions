@@ -26,6 +26,11 @@ export const AnswerResult = ({
         )}
       </p>
 
+      {/* 正解 */}
+      <p className="mb-2 text-sm sm:text-base text-green-600">
+        <span className="font-semibold">{MESSAGES.CORRECT_ANSWER}</span> {correctAnswer}
+      </p>
+
       {/* あなたの回答 */}
       {!isCorrect && (
         <p className="mb-2 text-sm sm:text-base text-gray-600">
@@ -33,11 +38,6 @@ export const AnswerResult = ({
           {selectedAnswer || "未選択"}
         </p>
       )}
-
-      {/* 正解 */}
-      <p className="mb-2 text-sm sm:text-base text-gray-600">
-        <span className="font-semibold">{MESSAGES.CORRECT_ANSWER}</span> {correctAnswer}
-      </p>
 
       {/* メモ */}
       {memo && (

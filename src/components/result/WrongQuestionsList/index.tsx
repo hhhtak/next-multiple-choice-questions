@@ -28,17 +28,17 @@ export const WrongQuestionsList = ({ wrongQuestions }: WrongQuestionsListProps) 
           <p className="font-semibold mb-2 text-base sm:text-lg text-gray-600">
             Q: {wrongQuestion.question}
           </p>
+          {/* 正解 */}
+          <p className="text-sm sm:text-base text-gray-600">
+            {MESSAGES.CORRECT_ANSWER}{" "}
+            <span className="text-green-600 font-medium">{wrongQuestion.answer}</span>
+          </p>
           {/* あなたの回答 */}
           <p className="mb-1 text-sm sm:text-base text-gray-600">
             {MESSAGES.YOUR_ANSWER}{" "}
             <span className="text-red-600 font-medium">
               {wrongQuestion.selectedAnswer}
             </span>
-          </p>
-          {/* 正解 */}
-          <p className="text-sm sm:text-base text-gray-600">
-            {MESSAGES.CORRECT_ANSWER}{" "}
-            <span className="text-green-600 font-medium">{wrongQuestion.answer}</span>
           </p>
           {/* 解説 (メモ) があれば表示 */}
           {wrongQuestion.memo && (
