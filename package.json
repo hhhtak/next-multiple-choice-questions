@@ -10,23 +10,23 @@
     "csv": "node scripts/format-csv.mjs"
   },
   "dependencies": {
-    "jotai": "^2.13.0",
+    "jotai": "^2.13.1",
     "next": "15.4.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router": "^7.7.1"
+    "react-router": "^7.8.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^24.2.0",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "csv-parse": "^6.1.0",
     "csv-stringify": "^6.6.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.34.0",
     "eslint-config-next": "15.4.4",
-    "tailwindcss": "^4.1.11",
+    "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2"
   }
 }
