@@ -132,7 +132,7 @@ function displayResults(newQuestions, sameAnswerQuestions) {
     console.log("新規追加された問題はありません。");
   } else {
     newQuestions.forEach((item, index) => {
-      console.log(`${index + 1}. [No: ${item.no}] ${item.question}`);
+      console.log(`${index + 1}. ${item.question}`);
       console.log(`   回答: ${item.answer}`);
       console.log(`   カテゴリ: ${item.category}`);
       console.log("");
@@ -150,7 +150,7 @@ function displayResults(newQuestions, sameAnswerQuestions) {
     sameAnswerQuestions.forEach((group, groupIndex) => {
       console.log(`${groupIndex + 1}. 回答: "${group.answer}"`);
       group.questions.forEach((question, questionIndex) => {
-        console.log(`   ${questionIndex + 1}. [No: ${question.no}] ${question.question}`);
+        console.log(`   ${questionIndex + 1}. ${question.question}`);
         console.log(`      カテゴリ: ${question.category}`);
       });
       console.log("");
