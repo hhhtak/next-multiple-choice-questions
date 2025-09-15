@@ -81,6 +81,60 @@
   - `answer`: 正解の選択肢
   - `memo`: 解説や参照情報
 
+## CSV 比較機能
+
+このプロジェクトには、CSV ファイルの比較機能が含まれています。
+
+### 使用方法
+
+```bash
+# npmスクリプト経由で実行（引数付き）
+npm run compare-csv -- <元ファイル> <バックアップファイル>
+
+# 直接実行
+node scripts/compare-csv.mjs <元ファイル> <バックアップファイル>
+```
+
+#### 使用例
+
+```bash
+# customer.csvとcustomer_bk.csvを比較
+npm run compare-csv -- public/csv/customer.csv public/csv/customer_bk.csv
+
+# it.csvとit_bk.csvを比較
+npm run compare-csv -- public/csv/it.csv public/csv/it_bk.csv
+
+# 絶対パスで指定
+npm run compare-csv -- /path/to/original.csv /path/to/backup.csv
+```
+
+このコマンドを実行すると、指定した 2 つの CSV ファイルを比較し、以下の情報を表示します：
+
+- **新規追加された問題**: バックアップファイルには存在しない、新しく追加された問題
+- **回答が同じ問題（元ファイル内）**: 元ファイル内で同じ回答を持つ問題をグループ化して表示
+
+### 機能の詳細
+
+- 問題文を基準に比較を行います
+- 新規追加された問題は、問題番号、問題文、回答、カテゴリを表示
+- 回答が同じ問題は、同じ回答を持つ問題をグループ化し、各問題の番号、問題文、カテゴリを表示
+- 比較結果のサマリーも表示されます
+
+### バックアップファイルの作成
+
+比較を行う前に、バックアップファイルを作成してください：
+
+```bash
+# customer.csvのバックアップを作成
+cp public/csv/customer.csv public/csv/customer_bk.csv
+
+# it.csvのバックアップを作成
+cp public/csv/it.csv public/csv/it_bk.csv
+
+# product.csvのバックアップを作成
+cp public/csv/product.csv public/csv/product_bk.csv
+```
+
 ## 今後の課題
 
 - 問題データの追加

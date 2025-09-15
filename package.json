@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "csv": "node scripts/format-csv.mjs"
+    "csv": "node scripts/format-csv.mjs",
+    "compare-csv": "node scripts/compare-csv.mjs"
   },
   "dependencies": {
     "jotai": "^2.14.0",

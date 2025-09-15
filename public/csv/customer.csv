@@ -1,3 +1,6 @@
 no,memo,category,question,option1,option2,option3,option4,answer,
 1,顧客テキストP5,顧客分野-Chapter1,顧客ニーズの定義とは？,会社の利益,ユーザーが本当に必要とすること,広告戦略,販売手法,ユーザーが本当に必要とすること
-2,顧客テキストP8,顧客分野-Chapter2,CRMの意味は？,Customer Repeat Model,Client Reaction Map,Customer Relationship Management,Corporate Role Management,Customer Relationship Management
+2,顧客テキストP8,顧客分野-Chapter2,CRMの意味は？,Customer Repeat Model,Client Reaction Map,Customer Relationship Management,Corporate Role Management,Customer Repeat Model
+3,顧客テキストP12,顧客分野-Chapter3,顧客満足度を測定する指標は？,売上高,顧客保持率,利益率,市場シェア,顧客保持率
+4,顧客テキストP15,顧客分野-Chapter4,顧客の真のニーズを理解するには？,市場調査,ユーザーが本当に必要とすること,競合分析,価格設定,ユーザーが本当に必要とすること
+5,顧客テキストP18,顧客分野-Chapter5,顧客ロイヤルティを高める方法は？,価格競争,顧客保持率,品質向上,広告宣伝,顧客保持率
