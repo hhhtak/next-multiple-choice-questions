@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "csv": "node scripts/format-csv.mjs",
+    "format-csv": "node scripts/format-csv.mjs",
     "compare-csv": "node scripts/csv-comparison.mjs",
     "check-duplicates": "node scripts/duplicate-detection.mjs"
   },

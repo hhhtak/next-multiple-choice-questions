@@ -90,7 +90,7 @@
 #### 1. CSV フォーマット整理
 
 ```bash
-npm run csv
+npm run format-csv
 ```
 
 - **機能**: `public/csv/` フォルダ内の CSV ファイル（`it.csv`, `product.csv`, `customer.csv`）を自動的にフォーマット整理
