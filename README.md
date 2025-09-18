@@ -81,44 +81,97 @@
   - `answer`: 正解の選択肢
   - `memo`: 解説や参照情報
 
-## CSV 比較機能
+## CSV 管理ツール
 
-このプロジェクトには、CSV ファイルの比較機能が含まれています。
+このプロジェクトには、CSV ファイルの管理と分析のためのツールが含まれています。
 
-### 使用方法
+### 利用可能なコマンド
 
-```bash
-# npmスクリプト経由で実行（引数付き）
-npm run compare-csv -- <元ファイル> <バックアップファイル>
-
-# 直接実行
-node scripts/compare-csv.mjs <元ファイル> <バックアップファイル>
-```
-
-#### 使用例
+#### 1. CSV フォーマット整理
 
 ```bash
-# customer.csvとcustomer_bk.csvを比較
-npm run compare-csv -- public/csv/customer.csv public/csv/customer_bk.csv
-
-# it.csvとit_bk.csvを比較
-npm run compare-csv -- public/csv/it.csv public/csv/it_bk.csv
-
-# 絶対パスで指定
-npm run compare-csv -- /path/to/original.csv /path/to/backup.csv
+npm run csv
 ```
 
-このコマンドを実行すると、指定した 2 つの CSV ファイルを比較し、以下の情報を表示します：
+- **機能**: `public/csv/` フォルダ内の CSV ファイル（`it.csv`, `product.csv`, `customer.csv`）を自動的にフォーマット整理
+- **処理内容**: ヘッダー行の追加、改行の正規化、末尾カンマの追加など
 
-- **新規追加された問題**: バックアップファイルには存在しない、新しく追加された問題
-- **回答が同じ問題（元ファイル内）**: 元ファイル内で同じ回答を持つ問題をグループ化して表示
+#### 2. ファイル比較（新規追加問題の抽出）
+
+```bash
+npm run compare-csv <元ファイル> <バックアップファイル>
+```
+
+- **機能**: 2 つの CSV ファイルを比較して新規追加された問題を抽出
+- **使用例**:
+
+  ```bash
+  # customer.csvとcustomer_bk.csvを比較
+  npm run compare-csv public/csv/customer.csv public/csv/customer_bk.csv
+
+  # it.csvとit_bk.csvを比較
+  npm run compare-csv public/csv/it.csv public/csv/it_bk.csv
+  ```
+
+#### 3. 重複チェック（同じ回答の問題検出）
+
+```bash
+npm run check-duplicates <ファイルパス>
+```
+
+- **機能**: 単一ファイル内で回答が同じ問題を検出
+- **使用例**:
+
+  ```bash
+  # customer.csv内の重複をチェック
+  npm run check-duplicates public/csv/customer.csv
+
+  # it.csv内の重複をチェック
+  npm run check-duplicates public/csv/it.csv
+  ```
+
+### 高度な分析ツール
+
+#### 統合分析ツール
+
+```bash
+# 直接実行（npmスクリプトなし）
+node scripts/analyze-csv.mjs <元ファイル> [バックアップファイル] [オプション]
+```
+
+**オプション**:
+
+- `--no-comparison`: ファイル比較をスキップ
+- `--no-duplicates`: 重複検出をスキップ
+- `--no-summary`: サマリー表示をスキップ
+- `--help`: ヘルプを表示
+
+**使用例**:
+
+```bash
+# 重複検出のみ実行
+node scripts/analyze-csv.mjs public/csv/customer.csv --no-comparison
+
+# 比較と重複検出の両方を実行
+node scripts/analyze-csv.mjs public/csv/customer.csv public/csv/customer_bk.csv
+
+# 比較のみ実行
+node scripts/analyze-csv.mjs public/csv/customer.csv public/csv/customer_bk.csv --no-duplicates
+```
 
 ### 機能の詳細
 
+#### ファイル比較機能
+
 - 問題文を基準に比較を行います
 - 新規追加された問題は、問題番号、問題文、回答、カテゴリを表示
-- 回答が同じ問題は、同じ回答を持つ問題をグループ化し、各問題の番号、問題文、カテゴリを表示
 - 比較結果のサマリーも表示されます
+
+#### 重複検出機能
+
+- 同じ回答を持つ問題をグループ化して表示
+- 各問題の番号、問題文、カテゴリを表示
+- 重複グループの総数を表示
 
 ### バックアップファイルの作成
 
