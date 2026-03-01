@@ -14,7 +14,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 /**
  * 配列から重複を除去する関数（IDを基準）
  */
-export function removeDuplicatesById<T extends { id: number }>(array: T[]): T[] {
+export function removeDuplicatesById<T extends { id: string | number }>(array: T[]): T[] {
   return array.filter(
     (item, index, self) => index === self.findIndex((q) => q.id === item.id)
   );

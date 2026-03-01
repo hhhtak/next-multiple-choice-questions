@@ -1,7 +1,14 @@
+import { Field } from "@/types";
 import { QuestionItem, WrongQuestionItem } from "@/types";
 import { atom } from "jotai";
 
 export const questionDataAtom = atom<QuestionItem[]>([]);
+
+// トップページで選択した分野（カテゴリページへ渡す用）
+export const selectedFieldsAtom = atom<Field[]>([]);
+
+// カテゴリページで選択した分類（一覧表示・クイズフィルター用）
+export const selectedCategoriesAtom = atom<string[]>([]);
 export const currentIndexAtom = atom(0);
 export const correctCountAtom = atom(0);
 export const wrongCountAtom = atom(0);
