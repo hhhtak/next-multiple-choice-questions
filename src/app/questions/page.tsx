@@ -85,7 +85,15 @@ const QuestionScreen = () => {
     }
   }, [currentIndex, totalQuestions, goToResultScreen]);
 
-  // showAnswersPermanently が true の場合、次の問題に進む際に handleNextQuestion で正解をセット
+  // showAnswersPermanently が true の場合、selectedAnswer を正解に設定
+  useEffect(() => {
+    if (showAnswersPermanently && currentQuestion) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedAnswer(currentQuestion.answer);
+      setIsAnswered(true);
+      setIsChecked(true);
+    }
+  }, [showAnswersPermanently, currentQuestion]);
 
   // --- 条件分岐とJSX ---
 
@@ -170,14 +178,9 @@ const QuestionScreen = () => {
       return;
     }
 
-    const nextIndex = currentIndex + 1;
-    const nextQuestion = filteredQuestionData[nextIndex];
-
     setIsAnswered(showAnswersPermanently);
     setIsChecked(showAnswersPermanently);
-    if (showAnswersPermanently && nextQuestion) {
-      setSelectedAnswer(nextQuestion.answer);
-    } else {
+    if (!showAnswersPermanently) {
       setSelectedAnswer(null);
     }
 
@@ -198,9 +201,7 @@ const QuestionScreen = () => {
       <div className="mb-6">
         <AnswerOptions
           shuffledOptions={shuffledOptions}
-          selectedAnswer={
-            showAnswersPermanently ? (currentQuestion?.answer ?? null) : selectedAnswer
-          }
+          selectedAnswer={selectedAnswer}
           handleAnswerChange={handleAnswerChange}
           isChecked={isChecked || showAnswersPermanently}
           correctAnswer={currentQuestion?.answer ?? null}
@@ -210,9 +211,7 @@ const QuestionScreen = () => {
       <QuizButtons
         isAnswered={isAnswered}
         showAnswersPermanently={showAnswersPermanently}
-        selectedAnswer={
-          showAnswersPermanently ? (currentQuestion?.answer ?? null) : selectedAnswer
-        }
+        selectedAnswer={selectedAnswer}
         onCheckAnswer={handleCheckAnswer}
         onInterrupt={goToResultScreen}
         isLastQuestion={currentIndex + 1 === totalQuestions}
