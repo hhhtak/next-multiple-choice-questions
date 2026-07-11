@@ -9,6 +9,7 @@ import {
   selectedCategoriesAtom,
   selectedFieldsAtom,
   showAnswersAtom,
+  showListAtom,
   startQuestionIndexAtom,
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
@@ -23,6 +24,7 @@ const CategoryPage = () => {
   const setCurrentIndex = useSetAtom(currentIndexAtom);
   const setStartQuestionIndex = useSetAtom(startQuestionIndexAtom);
   const [showAnswers, setShowAnswers] = useAtom(showAnswersAtom);
+  const [showList, setShowList] = useAtom(showListAtom);
 
   const [isRandom, setIsRandom] = useState(false);
   const [startIndex, setStartIndex] = useState<number | null>(null);
@@ -65,12 +67,31 @@ const CategoryPage = () => {
 
   const handleShowAnswersChange = () => setShowAnswers((prev) => !prev);
 
+  const handleShowListChange = () => {
+    setShowList((prev) => {
+      const next = !prev;
+      if (next) {
+        setShowAnswers(false);
+        setIsRandom(false);
+        setUseStartIndex(false);
+      }
+      return next;
+    });
+  };
+
   const handleStart = () => {
     const targetCategories =
       selectedCategories.length > 0 ? selectedCategories : categories;
     const filtered = allQuestionData.filter((q) =>
       targetCategories.includes(q.category?.trim() ?? "")
     );
+
+    if (showList) {
+      setQuestionData(filtered);
+      router.push("/questions/list");
+      return;
+    }
+
     const dataToUse = isRandom ? shuffleArray(filtered) : filtered;
 
     let start = 0;
@@ -194,6 +215,8 @@ const CategoryPage = () => {
             onStartIndexChange={handleInputChange}
             showAnswers={showAnswers}
             onShowAnswersChange={handleShowAnswersChange}
+            showList={showList}
+            onShowListChange={handleShowListChange}
           />
 
           <div className="flex flex-wrap gap-3 items-center mt-6">

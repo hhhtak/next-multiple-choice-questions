@@ -9,6 +9,8 @@ interface QuizOptionsProps {
   onStartIndexChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   showAnswers: boolean;
   onShowAnswersChange: () => void;
+  showList: boolean;
+  onShowListChange: () => void;
 }
 
 export const QuizOptions = ({
@@ -20,6 +22,8 @@ export const QuizOptions = ({
   onStartIndexChange,
   showAnswers,
   onShowAnswersChange,
+  showList,
+  onShowListChange,
 }: QuizOptionsProps) => {
   return (
     <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
@@ -32,9 +36,13 @@ export const QuizOptions = ({
           id="random"
           checked={isRandom}
           onChange={onRandomChange}
-          className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+          disabled={showList}
+          className="mr-3 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         />
-        <label htmlFor="random" className="text-base sm:text-lg text-gray-600">
+        <label
+          htmlFor="random"
+          className={`text-base sm:text-lg ${showList ? "text-gray-400" : "text-gray-600"}`}
+        >
           問題をランダムで表示させる
         </label>
       </div>
@@ -46,9 +54,13 @@ export const QuizOptions = ({
           id="useStartIndex"
           checked={useStartIndex}
           onChange={onUseStartIndexChange}
-          className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-1"
+          disabled={showList}
+          className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         />
-        <label htmlFor="useStartIndex" className="text-base sm:text-lg text-gray-600">
+        <label
+          htmlFor="useStartIndex"
+          className={`text-base sm:text-lg ${showList ? "text-gray-400" : "text-gray-600"}`}
+        >
           開始位置を指定する <span className="text-sm text-gray-600">(0から開始)</span>
         </label>
       </div>
@@ -57,7 +69,7 @@ export const QuizOptions = ({
       <div className="flex items-center space-x-3 w-full sm:w-auto pl-7">
         <label
           htmlFor="startIndex"
-          className="text-base sm:text-lg text-gray-600 whitespace-nowrap"
+          className={`text-base sm:text-lg whitespace-nowrap ${showList ? "text-gray-400" : "text-gray-600"}`}
         >
           開始番号:
         </label>
@@ -66,9 +78,9 @@ export const QuizOptions = ({
           id="startIndex"
           value={startIndex !== null ? startIndex : ""}
           onChange={onStartIndexChange}
-          disabled={!useStartIndex}
+          disabled={!useStartIndex || showList}
           className={`border border-gray-300 rounded-md px-3 py-1.5 text-base sm:text-lg w-24 text-gray-500 ${
-            !useStartIndex ? "bg-gray-200 cursor-not-allowed" : ""
+            !useStartIndex || showList ? "bg-gray-200 cursor-not-allowed" : ""
           } focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none`}
           min={MIN_START_INDEX}
           placeholder="0"
@@ -82,10 +94,28 @@ export const QuizOptions = ({
           id="showAnswers"
           checked={showAnswers}
           onChange={onShowAnswersChange}
-          className="w-5 h-5 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 focus:ring-offset-1"
+          disabled={showList}
+          className="w-5 h-5 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         />
-        <label htmlFor="showAnswers" className="text-base sm:text-lg text-gray-600">
+        <label
+          htmlFor="showAnswers"
+          className={`text-base sm:text-lg ${showList ? "text-gray-400" : "text-gray-600"}`}
+        >
           回答を常に表示する
+        </label>
+      </div>
+
+      {/* 一覧を表示チェックボックス */}
+      <div className="flex items-center space-x-2 pt-2">
+        <input
+          type="checkbox"
+          id="showList"
+          checked={showList}
+          onChange={onShowListChange}
+          className="w-5 h-5 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 focus:ring-offset-1"
+        />
+        <label htmlFor="showList" className="text-base sm:text-lg text-gray-600">
+          一覧を表示
         </label>
       </div>
     </div>

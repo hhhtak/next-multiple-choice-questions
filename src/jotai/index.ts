@@ -24,5 +24,8 @@ export const startQuestionIndexAtom = atom<number>(0);
 // スタート画面で設定する「回答を常に表示する」の状態
 export const showAnswersAtom = atom(false);
 
+// スタート画面で設定する「一覧を表示」の状態
+export const showListAtom = atom(false);
+
 // 間違った問題を再挑戦するための問題リスト
 export const questionsForRetryAtom = atom<QuestionItem[] | null>(null);
