@@ -6,10 +6,9 @@ interface QuestionListTableProps {
 
 const TABLE_COLUMNS = [
   { key: "no", label: "No", className: "w-16 min-w-[4rem]" },
-  { key: "memo", label: "Memo", className: "min-w-[8rem]" },
-  { key: "category", label: "Category", className: "min-w-[6rem]" },
   { key: "question", label: "Question", className: "min-w-[12rem]" },
   { key: "answer", label: "Answer", className: "min-w-[8rem]" },
+  { key: "category", label: "Category", className: "min-w-[6rem]" },
 ] as const;
 
 export const QuestionListTable = ({ questions }: QuestionListTableProps) => {
@@ -47,17 +46,14 @@ export const QuestionListTable = ({ questions }: QuestionListTableProps) => {
               <td className="px-4 py-3 text-gray-700 font-medium whitespace-nowrap align-top">
                 {q.id}
               </td>
-              <td className="px-4 py-3 text-gray-600 align-top whitespace-pre-wrap break-words">
-                {q.memo || "—"}
-              </td>
-              <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">
-                {q.category}
-              </td>
               <td className="px-4 py-3 text-gray-800 align-top whitespace-pre-wrap break-words">
                 {q.question}
               </td>
               <td className="px-4 py-3 text-teal-700 font-medium align-top whitespace-pre-wrap break-words">
                 {q.answer}
+              </td>
+              <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">
+                {q.category}
               </td>
             </tr>
           ))}

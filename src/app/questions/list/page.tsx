@@ -2,14 +2,13 @@
 
 import { QuestionListTable } from "@/components/quiz/QuestionListTable";
 import { MESSAGES } from "@/constants";
-import { questionDataAtom, selectedCategoriesAtom } from "@/jotai";
+import { questionDataAtom } from "@/jotai";
 import { useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const QuestionListPage = () => {
   const questionData = useAtomValue(questionDataAtom);
-  const selectedCategories = useAtomValue(selectedCategoriesAtom);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,17 +26,9 @@ const QuestionListPage = () => {
   return (
     <div className="p-4 sm:p-6">
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-700">
           問題一覧
         </h1>
-        <p className="text-gray-500 text-sm sm:text-base">
-          {selectedCategories.length > 0
-            ? `選択カテゴリ: ${selectedCategories.join(" / ")}`
-            : "全カテゴリ"}
-          <span className="ml-2 text-teal-600 font-medium">
-            （{questionData.length} 件）
-          </span>
-        </p>
       </div>
 
       <QuestionListTable questions={questionData} />
