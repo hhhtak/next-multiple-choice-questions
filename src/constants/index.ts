@@ -49,4 +49,5 @@ export const MESSAGES = {
   TOTAL_MISTAKE_COUNT: "ミス合計:",
   REVIEW_FIELD_QUESTIONS: "の間違えた問題を解く",
   NO_STORED_WRONG_QUESTIONS: "保存された間違えた問題はありません。",
+  DELETE_WRONG_ANSWERS: "間違った問題をすべて削除",
 } as const;

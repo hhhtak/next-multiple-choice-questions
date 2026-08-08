@@ -96,3 +96,8 @@ export function storedToQuestionItem(stored: StoredWrongAnswer): QuestionItem {
     memo: stored.memo,
   };
 }
+
+export function clearWrongAnswers(): void {
+  if (!isBrowser()) return;
+  localStorage.removeItem(STORAGE_KEY);
+}

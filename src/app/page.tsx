@@ -2,14 +2,17 @@
 
 import { FieldSelector } from "@/components/quiz/FieldSelector";
 import { StoredWrongReviewSection } from "@/components/quiz/StoredWrongReviewSection";
-import { selectedFieldsAtom } from "@/jotai";
+import { selectedFieldsAtom, wrongQuestionsAtom } from "@/jotai";
 import { Field } from "@/types";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { clearWrongAnswers } from "@/utils/wrongAnswerStorage";
+import { MESSAGES } from "@/constants";
 
 const StartScreen = () => {
   const setSelectedFields = useSetAtom(selectedFieldsAtom);
+  const setWrongQuestions = useSetAtom(wrongQuestionsAtom);
   const [selectedFields, setSelectedFieldsLocal] = useState<Field[]>([]);
   const router = useRouter();
 
@@ -23,6 +26,13 @@ const StartScreen = () => {
     setSelectedFields(selectedFields);
     router.push("/questions/category");
   };
+
+  const handleClearWrongAnswers = useCallback(() => {
+    if (window.confirm("本当に間違った問題をすべて削除しますか？この操作は元に戻せません。")) {
+      clearWrongAnswers();
+      setWrongQuestions([]);
+    }
+  }, [setWrongQuestions]);
 
   return (
     <div className="p-4 sm:p-6">
@@ -48,6 +58,15 @@ const StartScreen = () => {
       </button>
 
       <StoredWrongReviewSection />
+
+      <div className="mt-4 text-center">
+        <button
+          onClick={handleClearWrongAnswers}
+          className="text-sm text-red-600 hover:text-red-800 transition-colors duration-200"
+        >
+          {MESSAGES.DELETE_WRONG_ANSWERS}
+        </button>
+      </div>
     </div>
   );
 };
