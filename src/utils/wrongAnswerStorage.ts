@@ -71,15 +71,25 @@ export function getStoredWrongAnswer(questionId: string): StoredWrongAnswer | un
   return store[questionId];
 }
 
-export function getWrongAnswersByField(field: Field): StoredWrongAnswer[] {
+export function getWrongAnswersByField(
+  field: Field,
+  minMistakeCount?: number
+): StoredWrongAnswer[] {
   const store = loadStore();
-  return Object.values(store)
-    .filter((item) => item.field === field)
-    .sort((a, b) => b.lastMistakenAt.localeCompare(a.lastMistakenAt));
+  let values = Object.values(store).filter((item) => item.field === field);
+
+  if (minMistakeCount && minMistakeCount > 0) {
+    values = values.filter((item) => item.mistakeCount >= minMistakeCount);
+  }
+
+  return values.sort((a, b) => b.lastMistakenAt.localeCompare(a.lastMistakenAt));
 }
 
-export function getWrongAnswerCountByField(field: Field): number {
-  return getWrongAnswersByField(field).length;
+export function getWrongAnswerCountByField(
+  field: Field,
+  minMistakeCount?: number
+): number {
+  return getWrongAnswersByField(field, minMistakeCount).length;
 }
 
 export function storedToQuestionItem(stored: StoredWrongAnswer): QuestionItem {
