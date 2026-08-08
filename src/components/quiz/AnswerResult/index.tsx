@@ -6,6 +6,7 @@ interface AnswerResultProps {
   memo: string;
   handleNextQuestion: () => void;
   selectedAnswer: string | null;
+  mistakeCount: number;
 }
 
 export const AnswerResult = ({
@@ -14,6 +15,7 @@ export const AnswerResult = ({
   memo,
   handleNextQuestion,
   selectedAnswer,
+  mistakeCount,
 }: AnswerResultProps) => {
   return (
     <div className="mt-6 p-4 border rounded-lg shadow-sm bg-white border-gray-300">
@@ -33,10 +35,16 @@ export const AnswerResult = ({
 
       {/* あなたの回答 */}
       {!isCorrect && (
-        <p className="mb-2 text-sm sm:text-base text-gray-600">
-          <span className="font-semibold">{MESSAGES.YOUR_ANSWER}</span>{" "}
-          {selectedAnswer || "未選択"}
-        </p>
+        <>
+          <p className="mb-2 text-sm sm:text-base text-gray-600">
+            <span className="font-semibold">{MESSAGES.YOUR_ANSWER}</span>{" "}
+            {selectedAnswer || "未選択"}
+          </p>
+          <p className="mb-2 text-sm sm:text-base text-orange-600">
+            <span className="font-semibold">{MESSAGES.MISTAKE_COUNT}</span>{" "}
+            {mistakeCount}回
+          </p>
+        </>
       )}
 
       {/* メモ */}

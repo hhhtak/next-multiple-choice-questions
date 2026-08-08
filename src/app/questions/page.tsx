@@ -42,6 +42,7 @@ const QuestionScreen = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(showAnswersPermanently);
   const [isChecked, setIsChecked] = useState(showAnswersPermanently);
+  const [mistakeCount, setMistakeCount] = useState(0);
 
   // 現在アクティブな問題リストを決定
   const activeQuestionData = useMemo(() => {
@@ -66,13 +67,17 @@ const QuestionScreen = () => {
   const currentQuestion = filteredQuestionData[currentIndex];
   const totalQuestions = filteredQuestionData.length;
 
+  useEffect(() => {
+    if (currentQuestion) {
+      setMistakeCount(getMistakeCount(currentQuestion));
+    }
+  }, [currentQuestion]);
+
   const shuffledOptions = useMemo(() => {
     if (!currentQuestion) return [];
     const options = getQuestionOptions(currentQuestion);
     return shuffleArray(options);
   }, [currentQuestion]);
-
-  const mistakeCount = currentQuestion ? getMistakeCount(currentQuestion) : 0;
 
   // 結果画面へ遷移する処理
   const goToResultScreen = useCallback(() => {
@@ -160,13 +165,14 @@ const QuestionScreen = () => {
       incrementCorrect();
     } else {
       incrementWrong();
-      const mistakeCount = recordWrongAnswer(currentQuestion, selectedAnswer);
+      const newMistakeCount = recordWrongAnswer(currentQuestion, selectedAnswer);
+      setMistakeCount(newMistakeCount);
       setWrongQuestions((prevWrongQuestions) => [
         ...prevWrongQuestions,
         {
           ...currentQuestion,
           selectedAnswer: selectedAnswer,
-          mistakeCount,
+          mistakeCount: newMistakeCount,
         },
       ]);
     }
@@ -232,6 +238,7 @@ const QuestionScreen = () => {
           selectedAnswer={
             showAnswersPermanently ? currentQuestion.answer : selectedAnswer
           }
+          mistakeCount={mistakeCount}
         />
       )}
     </div>
