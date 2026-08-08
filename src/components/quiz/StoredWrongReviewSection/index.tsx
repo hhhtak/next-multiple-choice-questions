@@ -9,11 +9,7 @@ import {
   wrongQuestionsAtom,
 } from "@/jotai";
 import { Field } from "@/types";
-import {
-  getWrongAnswersByField,
-  getWrongAnswerCountByField,
-  storedToQuestionItem,
-} from "@/utils/wrongAnswerStorage";
+import { getWrongAnswersByField, storedToQuestionItem } from "@/utils/wrongAnswerStorage";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -40,10 +36,7 @@ export const StoredWrongReviewSection = () => {
       return {
         field,
         questionCount: stored.length,
-        totalMistakes: stored.reduce(
-          (sum, item) => sum + item.mistakeCount,
-          0
-        ),
+        totalMistakes: stored.reduce((sum, item) => sum + item.mistakeCount, 0),
       };
     });
     setFieldSummaries(summaries);
@@ -67,8 +60,10 @@ export const StoredWrongReviewSection = () => {
     router.push("/questions");
   };
 
-  const hasStoredQuestions = fieldSummaries.some((summary) => summary.questionCount > 0);
-  const totalStoredQuestions = fieldSummaries.reduce((sum, s) => sum + s.questionCount, 0);
+  const totalStoredQuestions = fieldSummaries.reduce(
+    (sum, s) => sum + s.questionCount,
+    0,
+  );
 
   return (
     <div className="mt-10 pt-8 border-t border-gray-200">
@@ -80,14 +75,19 @@ export const StoredWrongReviewSection = () => {
       </p>
 
       <div className="mb-4">
-        <label htmlFor="min-mistake-count" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="min-mistake-count"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           間違えた回数が次の値以上の問題
         </label>
         <input
           type="number"
           id="min-mistake-count"
           value={minMistakeCount}
-          onChange={(e) => setMinMistakeCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
+          onChange={(e) =>
+            setMinMistakeCount(Math.max(1, parseInt(e.target.value, 10) || 1))
+          }
           className="w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           min="1"
         />

@@ -27,7 +27,7 @@ function saveStore(store: Record<string, StoredWrongAnswer>): void {
 function toStoredWrongAnswer(
   question: QuestionItem,
   selectedAnswer: string,
-  mistakeCount: number
+  mistakeCount: number,
 ): StoredWrongAnswer {
   return {
     id: getQuestionKey(question),
@@ -46,7 +46,10 @@ function toStoredWrongAnswer(
   };
 }
 
-export function recordWrongAnswer(question: QuestionItem, selectedAnswer: string): number {
+export function recordWrongAnswer(
+  question: QuestionItem,
+  selectedAnswer: string,
+): number {
   if (!question.field) return 1;
 
   const key = getQuestionKey(question);
@@ -73,7 +76,7 @@ export function getStoredWrongAnswer(questionId: string): StoredWrongAnswer | un
 
 export function getWrongAnswersByField(
   field: Field,
-  minMistakeCount?: number
+  minMistakeCount?: number,
 ): StoredWrongAnswer[] {
   const store = loadStore();
   let values = Object.values(store).filter((item) => item.field === field);
@@ -83,13 +86,6 @@ export function getWrongAnswersByField(
   }
 
   return values.sort((a, b) => b.lastMistakenAt.localeCompare(a.lastMistakenAt));
-}
-
-export function getWrongAnswerCountByField(
-  field: Field,
-  minMistakeCount?: number
-): number {
-  return getWrongAnswersByField(field, minMistakeCount).length;
 }
 
 export function storedToQuestionItem(stored: StoredWrongAnswer): QuestionItem {
