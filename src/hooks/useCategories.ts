@@ -1,6 +1,7 @@
 import { CSV_PATHS } from "@/constants";
 import { Field, QuestionItem } from "@/types";
 import { parseCsv } from "@/util/parseCsv";
+import { withFieldMeta } from "@/utils/questionId";
 import { useEffect, useState } from "react";
 
 /**
@@ -68,7 +69,7 @@ export const useCategories = (selectedFields: Field[]): UseCategoriesReturn => {
             throw new Error(`Failed to fetch ${field}.csv: ${res.statusText}`);
           }
           const text = await res.text();
-          return parseCsv(text);
+          return parseCsv(text).map((item) => withFieldMeta(field, item));
         });
 
         const csvDataArrays = await Promise.all(csvPromises);

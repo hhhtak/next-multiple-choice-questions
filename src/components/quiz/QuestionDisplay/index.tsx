@@ -7,6 +7,7 @@ interface QuestionDisplayProps {
   totalQuestions: number;
   correctCount: number;
   wrongCount: number;
+  mistakeCount?: number;
 }
 
 export const QuestionDisplay = ({
@@ -15,6 +16,7 @@ export const QuestionDisplay = ({
   totalQuestions,
   correctCount,
   wrongCount,
+  mistakeCount = 0,
 }: QuestionDisplayProps) => {
   return (
     <>
@@ -37,6 +39,12 @@ export const QuestionDisplay = ({
           <p className="text-sm sm:text-base text-red-600">
             {MESSAGES.INCORRECT_COUNT} <span className="font-medium">{wrongCount}</span>
           </p>
+          {mistakeCount > 0 && (
+            <p className="text-sm sm:text-base text-orange-600">
+              {MESSAGES.MISTAKE_COUNT}{" "}
+              <span className="font-medium">{mistakeCount}回</span>
+            </p>
+          )}
         </div>
       </div>
 

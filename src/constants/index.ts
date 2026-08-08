@@ -42,4 +42,11 @@ export const MESSAGES = {
   SCORE: "スコア",
   CORRECT_RATE: "正解率:",
   REVIEW_WRONG_QUESTIONS: "間違った問題の確認",
+  STORED_WRONG_REVIEW: "保存した間違えた問題",
+  STORED_WRONG_REVIEW_DESC: "分野ごとに保存された間違えた問題を解くことができます。",
+  STORED_WRONG_COUNT: "保存済み:",
+  MISTAKE_COUNT: "ミス回数:",
+  TOTAL_MISTAKE_COUNT: "ミス合計:",
+  REVIEW_FIELD_QUESTIONS: "の間違えた問題を解く",
+  NO_STORED_WRONG_QUESTIONS: "保存された間違えた問題はありません。",
 } as const;

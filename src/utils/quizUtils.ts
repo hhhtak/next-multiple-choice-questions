@@ -15,7 +15,7 @@ export function convertWrongQuestionToQuestion(
   wrongQuestion: WrongQuestionItem
 ): QuestionItem {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { selectedAnswer, ...questionData } = wrongQuestion;
+  const { selectedAnswer, mistakeCount, ...questionData } = wrongQuestion;
   return questionData;
 }
 

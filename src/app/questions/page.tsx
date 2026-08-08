@@ -19,6 +19,7 @@ import {
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
 import { getQuestionOptions } from "@/utils/quizUtils";
+import { getMistakeCount, recordWrongAnswer } from "@/utils/wrongAnswerStorage";
 import { useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -26,7 +27,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 const QuestionScreen = () => {
   // --- フック呼び出し ---
   const [initialQuestionData] = useAtom(questionDataAtom);
-  const [questionsForRetry, setQuestionsForRetry] = useAtom(questionsForRetryAtom);
+  const [questionsForRetry] = useAtom(questionsForRetryAtom);
   const [startQuestionIndex] = useAtom(startQuestionIndexAtom);
   const [currentIndex, setCurrentIndex] = useAtom(currentIndexAtom);
   const [correctCount] = useAtom(correctCountAtom);
@@ -71,13 +72,12 @@ const QuestionScreen = () => {
     return shuffleArray(options);
   }, [currentQuestion]);
 
-  // 結果画面へ遷移する際に questionsForRetry をクリアする処理
+  const mistakeCount = currentQuestion ? getMistakeCount(currentQuestion) : 0;
+
+  // 結果画面へ遷移する処理
   const goToResultScreen = useCallback(() => {
-    if (questionsForRetry && questionsForRetry.length > 0) {
-      setQuestionsForRetry(null);
-    }
     router.push("/questions/result");
-  }, [questionsForRetry, setQuestionsForRetry, router]);
+  }, [router]);
 
   useEffect(() => {
     if (totalQuestions > 0 && currentIndex >= totalQuestions) {
@@ -160,11 +160,13 @@ const QuestionScreen = () => {
       incrementCorrect();
     } else {
       incrementWrong();
+      const mistakeCount = recordWrongAnswer(currentQuestion, selectedAnswer);
       setWrongQuestions((prevWrongQuestions) => [
         ...prevWrongQuestions,
         {
           ...currentQuestion,
           selectedAnswer: selectedAnswer,
+          mistakeCount,
         },
       ]);
     }
@@ -196,6 +198,7 @@ const QuestionScreen = () => {
         totalQuestions={totalQuestions}
         correctCount={correctCount}
         wrongCount={wrongCount}
+        mistakeCount={mistakeCount}
       />
 
       <div className="mb-6">

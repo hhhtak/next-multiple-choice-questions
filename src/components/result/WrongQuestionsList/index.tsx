@@ -1,6 +1,7 @@
 import { MESSAGES } from "@/constants";
 import { WrongQuestionItem } from "@/types";
 import { removeDuplicatesById } from "@/utils/arrayUtils";
+import { getMistakeCount } from "@/utils/wrongAnswerStorage";
 
 interface WrongQuestionsListProps {
   wrongQuestions: WrongQuestionItem[];
@@ -19,7 +20,11 @@ export const WrongQuestionsList = ({ wrongQuestions }: WrongQuestionsListProps) 
 
   return (
     <ul className="space-y-4">
-      {uniqueWrongQuestions.map((wrongQuestion, index) => (
+      {uniqueWrongQuestions.map((wrongQuestion, index) => {
+        const mistakeCount =
+          getMistakeCount(wrongQuestion) || wrongQuestion.mistakeCount || 0;
+
+        return (
         <li
           key={wrongQuestion.id ?? index}
           className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
@@ -28,6 +33,12 @@ export const WrongQuestionsList = ({ wrongQuestions }: WrongQuestionsListProps) 
           <p className="font-semibold mb-2 text-base sm:text-lg text-gray-600">
             Q: {wrongQuestion.question}
           </p>
+          {mistakeCount > 0 && (
+            <p className="text-sm sm:text-base text-orange-600 mb-2">
+              {MESSAGES.MISTAKE_COUNT}{" "}
+              <span className="font-medium">{mistakeCount}回</span>
+            </p>
+          )}
           {/* 正解 */}
           <p className="text-sm sm:text-base text-gray-600">
             {MESSAGES.CORRECT_ANSWER}{" "}
@@ -48,7 +59,8 @@ export const WrongQuestionsList = ({ wrongQuestions }: WrongQuestionsListProps) 
             </p>
           )}
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 };

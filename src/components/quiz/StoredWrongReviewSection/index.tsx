@@ -1,0 +1,116 @@
+"use client";
+
+import { FIELDS, FIELD_LABELS, MESSAGES } from "@/constants";
+import {
+  correctCountAtom,
+  currentIndexAtom,
+  questionsForRetryAtom,
+  wrongCountAtom,
+  wrongQuestionsAtom,
+} from "@/jotai";
+import { Field } from "@/types";
+import {
+  getWrongAnswersByField,
+  getWrongAnswerCountByField,
+  storedToQuestionItem,
+} from "@/utils/wrongAnswerStorage";
+import { useSetAtom } from "jotai";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+
+interface FieldSummary {
+  field: Field;
+  questionCount: number;
+  totalMistakes: number;
+}
+
+export const StoredWrongReviewSection = () => {
+  const router = useRouter();
+  const setQuestionsForRetry = useSetAtom(questionsForRetryAtom);
+  const setCurrentIndex = useSetAtom(currentIndexAtom);
+  const setCorrectCount = useSetAtom(correctCountAtom);
+  const setWrongCount = useSetAtom(wrongCountAtom);
+  const setWrongQuestions = useSetAtom(wrongQuestionsAtom);
+  const [fieldSummaries, setFieldSummaries] = useState<FieldSummary[]>([]);
+
+  const refreshSummaries = useCallback(() => {
+    const summaries = FIELDS.map((field) => {
+      const stored = getWrongAnswersByField(field);
+      return {
+        field,
+        questionCount: getWrongAnswerCountByField(field),
+        totalMistakes: stored.reduce((sum, item) => sum + item.mistakeCount, 0),
+      };
+    });
+    setFieldSummaries(summaries);
+  }, []);
+
+  useEffect(() => {
+    refreshSummaries();
+  }, [refreshSummaries]);
+
+  const handleReviewField = (field: Field) => {
+    const storedQuestions = getWrongAnswersByField(field);
+    if (storedQuestions.length === 0) return;
+
+    const questionsToRetry = storedQuestions.map(storedToQuestionItem);
+
+    setQuestionsForRetry(questionsToRetry);
+    setCurrentIndex(0);
+    setCorrectCount(0);
+    setWrongCount(0);
+    setWrongQuestions([]);
+    router.push("/questions");
+  };
+
+  const hasStoredQuestions = fieldSummaries.some((summary) => summary.questionCount > 0);
+
+  return (
+    <div className="mt-10 pt-8 border-t border-gray-200">
+      <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-600">
+        {MESSAGES.STORED_WRONG_REVIEW}
+      </h2>
+      <p className="text-sm sm:text-base text-gray-500 mb-6">
+        {MESSAGES.STORED_WRONG_REVIEW_DESC}
+      </p>
+
+      {!hasStoredQuestions ? (
+        <p className="text-base text-gray-600 bg-gray-100 p-4 rounded-md border border-gray-200">
+          {MESSAGES.NO_STORED_WRONG_QUESTIONS}
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {fieldSummaries.map(({ field, questionCount, totalMistakes }) => (
+            <button
+              key={field}
+              onClick={() => handleReviewField(field)}
+              disabled={questionCount === 0}
+              className={`w-full text-left p-4 rounded-lg border transition duration-150 ease-in-out ${
+                questionCount === 0
+                  ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-600"
+              }`}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span className="font-semibold text-base sm:text-lg">
+                  {FIELD_LABELS[field]}
+                  {MESSAGES.REVIEW_FIELD_QUESTIONS}
+                </span>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-base">
+                  <span>
+                    {MESSAGES.STORED_WRONG_COUNT}{" "}
+                    <span className="font-medium">{questionCount}問</span>
+                  </span>
+                  <span className="text-orange-600">
+                    {MESSAGES.TOTAL_MISTAKE_COUNT}{" "}
+                    <span className="font-medium">{totalMistakes}回</span>
+                  </span>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};

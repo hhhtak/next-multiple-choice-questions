@@ -1,6 +1,7 @@
 "use client";
 
 import { FieldSelector } from "@/components/quiz/FieldSelector";
+import { StoredWrongReviewSection } from "@/components/quiz/StoredWrongReviewSection";
 import { selectedFieldsAtom } from "@/jotai";
 import { Field } from "@/types";
 import { useSetAtom } from "jotai";
@@ -45,6 +46,8 @@ const StartScreen = () => {
       >
         カテゴリを選択して試験へ
       </button>
+
+      <StoredWrongReviewSection />
     </div>
   );
 };
