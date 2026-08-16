@@ -19,10 +19,14 @@ import {
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
 import { getQuestionOptions } from "@/utils/quizUtils";
-import { getMistakeCount, recordWrongAnswer } from "@/utils/wrongAnswerStorage";
+import {
+  getMistakeCount,
+  recordWrongAnswer,
+} from "@/utils/wrongAnswerStorage";
 import { useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { incrementAnswerCount } from "@/utils/answerCountStorage";
 
 const QuestionScreen = () => {
   // --- フック呼び出し ---
@@ -160,6 +164,8 @@ const QuestionScreen = () => {
 
   const handleCheckAnswer = () => {
     if (!selectedAnswer || !currentQuestion || showAnswersPermanently) return;
+
+    incrementAnswerCount(currentQuestion.id);
 
     if (selectedAnswer === currentQuestion.answer) {
       incrementCorrect();

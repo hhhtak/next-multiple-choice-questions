@@ -1,6 +1,7 @@
 import { CSV_PATHS } from "@/constants";
 import { Field, QuestionItem } from "@/types";
 import { parseCsv } from "@/util/parseCsv";
+import { getAnswerCount } from "@/utils/answerCountStorage";
 import { withFieldMeta } from "@/utils/questionId";
 import { useEffect, useState } from "react";
 
@@ -75,14 +76,19 @@ export const useCategories = (selectedFields: Field[]): UseCategoriesReturn => {
         const csvDataArrays = await Promise.all(csvPromises);
         const combined = csvDataArrays.flat();
 
+        const combinedWithAnswerCount = combined.map((item) => ({
+          ...item,
+          answerCount: getAnswerCount(item.id),
+        }));
+
         const categorySet = new Set<string>();
-        combined.forEach((item) => {
+        combinedWithAnswerCount.forEach((item) => {
           if (item.category?.trim()) {
             categorySet.add(item.category.trim());
           }
         });
         setCategories(Array.from(categorySet).sort(naturalCategorySort));
-        setAllQuestionData(combined);
+        setAllQuestionData(combinedWithAnswerCount);
       } catch (err) {
         console.error("CSVファイルの読み込みに失敗しました:", err);
         setError(err instanceof Error ? err.message : "不明なエラーが発生しました");

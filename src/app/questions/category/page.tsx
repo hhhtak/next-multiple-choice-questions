@@ -11,6 +11,8 @@ import {
   showAnswersAtom,
   showListAtom,
   startQuestionIndexAtom,
+  filterByAnswerCountAtom,
+  maxAnswerCountAtom,
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
 import { useAtom, useSetAtom } from "jotai";
@@ -19,18 +21,25 @@ import { useEffect, useState } from "react";
 
 const CategoryPage = () => {
   const [selectedFields] = useAtom(selectedFieldsAtom);
-  const [selectedCategories, setSelectedCategories] = useAtom(selectedCategoriesAtom);
+  const [selectedCategories, setSelectedCategories] = useAtom(
+    selectedCategoriesAtom
+  );
   const setQuestionData = useSetAtom(questionDataAtom);
   const setCurrentIndex = useSetAtom(currentIndexAtom);
   const setStartQuestionIndex = useSetAtom(startQuestionIndexAtom);
   const [showAnswers, setShowAnswers] = useAtom(showAnswersAtom);
   const [showList, setShowList] = useAtom(showListAtom);
+  const [filterByAnswerCount, setFilterByAnswerCount] = useAtom(
+    filterByAnswerCountAtom
+  );
+  const [maxAnswerCount, setMaxAnswerCount] = useAtom(maxAnswerCountAtom);
 
   const [isRandom, setIsRandom] = useState(false);
   const [startIndex, setStartIndex] = useState<number | null>(null);
   const [useStartIndex, setUseStartIndex] = useState(false);
 
-  const { categories, allQuestionData, loading, error } = useCategories(selectedFields);
+  const { categories, allQuestionData, loading, error } =
+    useCategories(selectedFields);
   const router = useRouter();
 
   const handleCategoryChange = (category: string) => {
@@ -82,17 +91,23 @@ const CategoryPage = () => {
   const handleStart = () => {
     const targetCategories =
       selectedCategories.length > 0 ? selectedCategories : categories;
-    const filtered = allQuestionData.filter((q) =>
+    const filteredByCategory = allQuestionData.filter((q) =>
       targetCategories.includes(q.category?.trim() ?? "")
     );
 
+    const filteredByAnswerCount = filterByAnswerCount
+      ? filteredByCategory.filter((q) => q.answerCount <= maxAnswerCount)
+      : filteredByCategory;
+
     if (showList) {
-      setQuestionData(filtered);
+      setQuestionData(filteredByAnswerCount);
       router.push("/questions/list");
       return;
     }
 
-    const dataToUse = isRandom ? shuffleArray(filtered) : filtered;
+    const dataToUse = isRandom
+      ? shuffleArray(filteredByAnswerCount)
+      : filteredByAnswerCount;
 
     let start = 0;
     if (useStartIndex && startIndex !== null && startIndex >= 0) {
@@ -217,6 +232,14 @@ const CategoryPage = () => {
             onShowAnswersChange={handleShowAnswersChange}
             showList={showList}
             onShowListChange={handleShowListChange}
+            filterByAnswerCount={filterByAnswerCount}
+            onFilterByAnswerCountChange={() =>
+              setFilterByAnswerCount((prev) => !prev)
+            }
+            maxAnswerCount={maxAnswerCount}
+            onMaxAnswerCountChange={(e) =>
+              setMaxAnswerCount(parseInt(e.target.value, 10))
+            }
           />
 
           <div className="flex flex-wrap gap-3 items-center mt-6">

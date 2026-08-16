@@ -11,6 +11,7 @@ export interface QuestionItem {
   option4: string;
   answer: string;
   memo: string;
+  answerCount: number;
 }
 
 export interface WrongQuestionItem extends QuestionItem {
