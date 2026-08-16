@@ -34,3 +34,15 @@ export function incrementAskedCount(questionId: string): void {
   allCounts[questionId] = (allCounts[questionId] || 0) + 1;
   saveAllAskedCounts(allCounts);
 }
+
+export function clearAskedCounts(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  try {
+    localStorage.removeItem(ASKED_COUNT_STORAGE_KEY);
+  } catch (error) {
+    console.error("Failed to clear asked counts from localStorage:", error);
+  }
+}
+

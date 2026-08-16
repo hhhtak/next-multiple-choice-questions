@@ -15,6 +15,7 @@ import {
   maxAskedCountAtom,
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
+import { clearAskedCounts } from "@/utils/askedCountStorage";
 import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -86,6 +87,13 @@ const CategoryPage = () => {
       }
       return next;
     });
+  };
+
+  const handleClearAskedCounts = () => {
+    if (confirm("出題回数をリセットします。よろしいですか？")) {
+      clearAskedCounts();
+      router.reload();
+    }
   };
 
   const handleStart = () => {
@@ -240,6 +248,7 @@ const CategoryPage = () => {
             onMaxAskedCountChange={(e) =>
               setMaxAskedCount(parseInt(e.target.value, 10))
             }
+            onClearAskedCounts={handleClearAskedCounts}
           />
 
           <div className="flex flex-wrap gap-3 items-center mt-6">

@@ -15,6 +15,7 @@ interface QuizOptionsProps {
   onFilterByAskedCountChange: () => void;
   maxAskedCount: number;
   onMaxAskedCountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearAskedCounts: () => void;
   }
 
   export const QuizOptions = ({
@@ -32,6 +33,7 @@ interface QuizOptionsProps {
   onFilterByAskedCountChange,
   maxAskedCount,
   onMaxAskedCountChange,
+  onClearAskedCounts,
   }: QuizOptionsProps) => {
   return (
     <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
@@ -176,15 +178,28 @@ interface QuizOptionsProps {
           checked={showList}
           onChange={onShowListChange}
           className="w-5 h-5 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 focus:ring-offset-1"
-        />
-        <label
+          />
+          <label
           htmlFor="showList"
           className="text-base sm:text-lg text-gray-600"
-        >
+          >
           一覧を表示
-        </label>
-      </div>
-    </div>
-  );
-  };
+          </label>
+          </div>
+
+          {/* 出題回数リセットボタン */}
+          <div className="pt-4 w-full">
+          <button
+          onClick={onClearAskedCounts}
+          disabled={showList}
+          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+            showList ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          >
+          出題回数をリセット
+          </button>
+          </div>
+          </div>
+          );
+          };
 
