@@ -26,9 +26,9 @@ export const showAnswersAtom = atom(false);
 // スタート画面で設定する「一覧を表示」の状態
 export const showListAtom = atom(false);
 
-// 出題回数でのフィルターの状態
-export const filterByAnswerCountAtom = atom(false);
-export const maxAnswerCountAtom = atom(5);
+// 回答回数でのフィルターの状態
+export const filterByAskedCountAtom = atom(false);
+export const maxAskedCountAtom = atom(5);
 
 // 間違った問題を再挑戦するための問題リスト
 export const questionsForRetryAtom = atom<QuestionItem[] | null>(null);

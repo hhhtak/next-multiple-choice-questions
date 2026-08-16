@@ -26,7 +26,7 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { incrementAnswerCount } from "@/utils/answerCountStorage";
+import { incrementAskedCount } from "@/utils/askedCountStorage";
 
 const QuestionScreen = () => {
   // --- フック呼び出し ---
@@ -165,7 +165,7 @@ const QuestionScreen = () => {
   const handleCheckAnswer = () => {
     if (!selectedAnswer || !currentQuestion || showAnswersPermanently) return;
 
-    incrementAnswerCount(currentQuestion.id);
+    incrementAskedCount(currentQuestion.id);
 
     if (selectedAnswer === currentQuestion.answer) {
       incrementCorrect();

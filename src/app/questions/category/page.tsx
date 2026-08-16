@@ -11,8 +11,8 @@ import {
   showAnswersAtom,
   showListAtom,
   startQuestionIndexAtom,
-  filterByAnswerCountAtom,
-  maxAnswerCountAtom,
+  filterByAskedCountAtom,
+  maxAskedCountAtom,
 } from "@/jotai";
 import { shuffleArray } from "@/utils/arrayUtils";
 import { useAtom, useSetAtom } from "jotai";
@@ -29,10 +29,10 @@ const CategoryPage = () => {
   const setStartQuestionIndex = useSetAtom(startQuestionIndexAtom);
   const [showAnswers, setShowAnswers] = useAtom(showAnswersAtom);
   const [showList, setShowList] = useAtom(showListAtom);
-  const [filterByAnswerCount, setFilterByAnswerCount] = useAtom(
-    filterByAnswerCountAtom
+  const [filterByAskedCount, setFilterByAskedCount] = useAtom(
+    filterByAskedCountAtom
   );
-  const [maxAnswerCount, setMaxAnswerCount] = useAtom(maxAnswerCountAtom);
+  const [maxAskedCount, setMaxAskedCount] = useAtom(maxAskedCountAtom);
 
   const [isRandom, setIsRandom] = useState(false);
   const [startIndex, setStartIndex] = useState<number | null>(null);
@@ -95,19 +95,19 @@ const CategoryPage = () => {
       targetCategories.includes(q.category?.trim() ?? "")
     );
 
-    const filteredByAnswerCount = filterByAnswerCount
-      ? filteredByCategory.filter((q) => q.answerCount <= maxAnswerCount)
+    const filteredByAskedCount = filterByAskedCount
+      ? filteredByCategory.filter((q) => q.askedCount <= maxAskedCount)
       : filteredByCategory;
 
     if (showList) {
-      setQuestionData(filteredByAnswerCount);
+      setQuestionData(filteredByAskedCount);
       router.push("/questions/list");
       return;
     }
 
     const dataToUse = isRandom
-      ? shuffleArray(filteredByAnswerCount)
-      : filteredByAnswerCount;
+      ? shuffleArray(filteredByAskedCount)
+      : filteredByAskedCount;
 
     let start = 0;
     if (useStartIndex && startIndex !== null && startIndex >= 0) {
@@ -232,13 +232,13 @@ const CategoryPage = () => {
             onShowAnswersChange={handleShowAnswersChange}
             showList={showList}
             onShowListChange={handleShowListChange}
-            filterByAnswerCount={filterByAnswerCount}
-            onFilterByAnswerCountChange={() =>
-              setFilterByAnswerCount((prev) => !prev)
+            filterByAskedCount={filterByAskedCount}
+            onFilterByAskedCountChange={() =>
+              setFilterByAskedCount((prev) => !prev)
             }
-            maxAnswerCount={maxAnswerCount}
-            onMaxAnswerCountChange={(e) =>
-              setMaxAnswerCount(parseInt(e.target.value, 10))
+            maxAskedCount={maxAskedCount}
+            onMaxAskedCountChange={(e) =>
+              setMaxAskedCount(parseInt(e.target.value, 10))
             }
           />
 

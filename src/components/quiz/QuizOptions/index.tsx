@@ -11,13 +11,13 @@ interface QuizOptionsProps {
   onShowAnswersChange: () => void;
   showList: boolean;
   onShowListChange: () => void;
-  filterByAnswerCount: boolean;
-  onFilterByAnswerCountChange: () => void;
-  maxAnswerCount: number;
-  onMaxAnswerCountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
+  filterByAskedCount: boolean;
+  onFilterByAskedCountChange: () => void;
+  maxAskedCount: number;
+  onMaxAskedCountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  }
 
-export const QuizOptions = ({
+  export const QuizOptions = ({
   isRandom,
   onRandomChange,
   useStartIndex,
@@ -28,11 +28,11 @@ export const QuizOptions = ({
   onShowAnswersChange,
   showList,
   onShowListChange,
-  filterByAnswerCount,
-  onFilterByAnswerCountChange,
-  maxAnswerCount,
-  onMaxAnswerCountChange,
-}: QuizOptionsProps) => {
+  filterByAskedCount,
+  onFilterByAskedCountChange,
+  maxAskedCount,
+  onMaxAskedCountChange,
+  }: QuizOptionsProps) => {
   return (
     <div className="flex flex-col items-start space-y-3 mb-8 border-t pt-6 mt-6 border-gray-200">
       <p className="text-lg font-semibold mb-1 text-gray-600">オプション:</p>
@@ -73,7 +73,8 @@ export const QuizOptions = ({
             showList ? "text-gray-400" : "text-gray-600"
           }`}
         >
-          開始位置を指定する <span className="text-sm text-gray-600">(0から開始)</span>
+          開始位置を指定する{" "}
+          <span className="text-sm text-gray-600">(0から開始)</span>
         </label>
       </div>
 
@@ -101,44 +102,46 @@ export const QuizOptions = ({
         />
       </div>
 
-      {/* 回答回数フィルター */}
+      {/* 出題回数フィルター */}
       <div className="flex items-center space-x-2 pt-2">
         <input
           type="checkbox"
-          id="filterByAnswerCount"
-          checked={filterByAnswerCount}
-          onChange={onFilterByAnswerCountChange}
+          id="filterByAskedCount"
+          checked={filterByAskedCount}
+          onChange={onFilterByAskedCountChange}
           disabled={showList}
           className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <label
-          htmlFor="filterByAnswerCount"
+          htmlFor="filterByAskedCount"
           className={`text-base sm:text-lg ${
             showList ? "text-gray-400" : "text-gray-600"
           }`}
         >
-          回答回数が少ない問題のみ出題する
+          出題回数が少ない問題のみ出題する
         </label>
       </div>
 
-      {/* 回答回数の上限入力 */}
+      {/* 出題回数の上限入力 */}
       <div className="flex items-center space-x-3 w-full sm:w-auto pl-7">
         <label
-          htmlFor="maxAnswerCount"
+          htmlFor="maxAskedCount"
           className={`text-base sm:text-lg whitespace-nowrap ${
-            !filterByAnswerCount || showList ? "text-gray-400" : "text-gray-600"
+            !filterByAskedCount || showList ? "text-gray-400" : "text-gray-600"
           }`}
         >
-          回答回数の上限:
+          出題回数の上限:
         </label>
         <input
           type="number"
-          id="maxAnswerCount"
-          value={maxAnswerCount}
-          onChange={onMaxAnswerCountChange}
-          disabled={!filterByAnswerCount || showList}
+          id="maxAskedCount"
+          value={maxAskedCount}
+          onChange={onMaxAskedCountChange}
+          disabled={!filterByAskedCount || showList}
           className={`border border-gray-300 rounded-md px-3 py-1.5 text-base sm:text-lg w-24 text-gray-500 ${
-            !filterByAnswerCount || showList ? "bg-gray-200 cursor-not-allowed" : ""
+            !filterByAskedCount || showList
+              ? "bg-gray-200 cursor-not-allowed"
+              : ""
           } focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none`}
           min={0}
           placeholder="5"
@@ -174,10 +177,14 @@ export const QuizOptions = ({
           onChange={onShowListChange}
           className="w-5 h-5 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 focus:ring-offset-1"
         />
-        <label htmlFor="showList" className="text-base sm:text-lg text-gray-600">
+        <label
+          htmlFor="showList"
+          className="text-base sm:text-lg text-gray-600"
+        >
           一覧を表示
         </label>
       </div>
     </div>
   );
-};
+  };
+
