@@ -92,7 +92,7 @@ const CategoryPage = () => {
   const handleClearAskedCounts = () => {
     if (confirm("出題回数をリセットします。よろしいですか？")) {
       clearAskedCounts();
-      router.reload();
+      router.refresh();
     }
   };
 
