@@ -37,6 +37,7 @@ export const parseCsv = (csvText: string): QuestionItem[] => {
       option4: row["option4"],
       answer: row["answer"],
       memo: row["memo"],
+      askedCount: 0,
     };
     data.push(questionItem);
   }

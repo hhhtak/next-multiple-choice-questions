@@ -1,4 +1,5 @@
 import { Field, QuestionItem, StoredWrongAnswer } from "@/types";
+import { getAskedCount } from "@/utils/askedCountStorage";
 import { getQuestionKey } from "@/utils/questionId";
 
 const STORAGE_KEY = "quiz-wrong-answers";
@@ -100,6 +101,7 @@ export function storedToQuestionItem(stored: StoredWrongAnswer): QuestionItem {
     option4: stored.option4,
     answer: stored.answer,
     memo: stored.memo,
+    askedCount: getAskedCount(stored.id),
   };
 }
 
